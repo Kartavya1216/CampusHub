@@ -1,0 +1,131 @@
+{%load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div class="max-w-md w-full bg-white p-8 rounded-lg shadow">
+          <h1 class="text-2xl font-bold mb-4">Create an account</h1>
+      
+          {% if messages %}
+            <div>
+              {% for message in messages %}
+                <div class="mb-3 text-sm text-green-700">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+      
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <!-- username -->
+            <div class="mb-4 text-black">
+              {{ form.username.label_tag }}
+              {{ form.username }}
+              {% if form.username.errors %}
+                <p class="text-red-600 text-sm">{{ form.username.errors.0 }}</p>
+              {% endif %}
+            </div>
+      
+            <!-- email -->
+            <div class="mb-4 text-black">
+              {{ form.email.label_tag }}
+              {{ form.email }}
+              {% if form.email.errors %}
+                <p class="text-red-600 text-sm">{{ form.email.errors.0 }}</p>
+              {% endif %}
+            </div>
+      
+            <!-- password1 -->
+            <div class="mb-4 text-black">
+              {{ form.password1.label_tag }}
+              {{ form.password1 }}
+              {% if form.password1.errors %}
+                <p class="text-red-600 text-sm">{{ form.password1.errors.0 }}</p>
+              {% endif %}
+            </div>
+      
+            <!-- password2 -->
+            <div class="mb-4 text-black">
+              {{ form.password2.label_tag }}
+              {{ form.password2 }}
+              {% if form.password2.errors %}
+                <p class="text-red-600 text-sm">{{ form.password2.errors.0 }}</p>
+              {% endif %}
+            </div>
+      
+            <!-- role -->
+            <div class="mb-4 text-black">
+              {{ form.role.label_tag }}
+              {{ form.role }}
+              {% if form.role.errors %}
+                <p class="text-red-600 text-sm">{{ form.role.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div id="id_semester" class="mb-4 text-black hidden">
+              {{ form.semester.label_tag}}
+              {{ form.semester}}
+              {% if form.semester.errors %}
+                <p class="text-red-600 text-sm">{{ form.semester.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div id="id_enrollment" class="mb-4 text-black hidden">
+              {{ form.enrollment.label_tag}}
+              {{ form.enrollment}}
+              {% if form.enrollment.errors %}
+                <p class="text-red-600 text-sm">{{ form.enrollment.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <!-- department -->
+            <div class="mb-4 text-black">
+              {{ form.department.label_tag }}
+              {{ form.department }}
+              {% if form.department.errors %}
+                <p class="text-red-600 text-sm">{{ form.department.errors.0 }}</p>
+              {% endif %}
+            </div>
+      
+            <!-- phone -->
+            <div class="mb-4 text-black">
+              {{ form.phone.label_tag }}
+              {{ form.phone }}
+              {% if form.phone.errors %}
+                <p class="text-red-600 text-sm">{{ form.phone.errors.0 }}</p>
+              {% endif %}
+            </div>
+      
+            <div class="mt-6">
+              <button type="submit" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md">Register</button>
+            </div>
+          </form>
+      
+          <p class="mt-4 text-sm text-gray-600">Already have an account? <a href="{% url 'login' %}" class="text-blue-700">Login</a></p>
+        </div>
+        <script>
+          function updateFields(){
+            let role = document.querySelector("select[name='role']").value;
+            let sem = document.getElementById("id_semester");
+            let enr = document.getElementById("id_enrollment");
+
+            sem.classList.add("hidden");
+            enr.classList.add("hidden");
+            if(role == "Student"){
+              sem.classList.remove("hidden");
+              enr.classList.remove("hidden");
+            }
+            else if(role == "Faculty"){
+              sem.classList.remove("hidden");
+            }
+          }
+          document.querySelector("select[name='role']").addEventListener("change",updateFields);
+          updateFields();
+        </script>
+      </body>
+</html>

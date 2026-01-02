@@ -1,0 +1,70 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet" />
+</head>
+
+<body class="bg-gray-100 p-10 text-black">
+
+        <header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
+            <a href="{% url 'student_dashboard' %}" 
+                   class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                    ← 
+                </a>
+    
+            <a href="{% url 'logout' %}" 
+               class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                Logout
+            </a>
+        </header>   
+
+<h1 class="text-3xl font-bold text-blue-800 mb-4">Study Materials</h1>
+<h2 class="text-xl text-gray-700 mb-10">
+    Department: <strong>{{ department }}</strong>
+</h2>
+
+<!-- SEMESTER BUTTON GRID -->
+<div class="grid grid-cols-4 gap-6 mb-10">
+    {% for sem in semesters %}
+        <a href="?semester={{ sem.id }}"
+           class="p-6 bg-white shadow rounded-lg text-center text-lg font-semibold 
+                  hover:bg-blue-700 hover:text-white transition border">
+            Semester {{ sem.semester_number }}
+        </a>
+    {% endfor %}
+</div>
+
+<!-- SUBJECTS SECTION -->
+{% if subjects %}
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Subjects in Semester {{ selected_semester.semester_number }}</h2>
+
+    <div class="grid grid-cols-3 gap-6 mb-10">
+        {% for sub in subjects %}
+            <a href="?semester={{ selected_semester.id }}&subject={{ sub.id }}"
+               class="p-5 bg-white shadow rounded-lg border hover:bg-blue-600 hover:text-white transition">
+                {{ sub.name }}
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- MATERIALS SECTION -->
+{% if materials %}
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Materials for {{ selected_subject.name }}</h2>
+
+    <div class="grid grid-cols-2 gap-6">
+        {% for mat in materials %}
+            <div class="p-6 bg-white shadow rounded-lg border">
+                <h3 class="text-xl font-semibold mb-2">{{ mat.title }}</h3>
+                <p class="text-gray-600 mb-3">{{ mat.description }}</p>
+
+                <a href="{{ mat.file.url }}" class="text-blue-600 underline" target="_blank">
+                    View / Download
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+</body>
+</html>

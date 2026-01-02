@@ -1,0 +1,78 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+    </head>
+    <body class="bg-gray-100 p-10 text-black">
+        <header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
+                <a href="{% url 'student_dashboard' %}" 
+                    class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                        ← 
+                    </a>
+        
+                <a href="{% url 'logout' %}" 
+                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                    Logout
+                </a>
+            </header> 
+        <div class="p-6">
+
+            <h1 class="text-2xl font-semibold mb-6">
+                Pending Room Booking Requests
+            </h1>
+
+            {% if bookings %}
+                <div class="overflow-x-auto bg-white shadow rounded-lg">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Room</th>
+                                <th class="px-4 py-3 text-left">Requested By</th>
+                                <th class="px-4 py-3 text-left">Date</th>
+                                <th class="px-4 py-3 text-left">Time</th>
+                                <th class="px-4 py-3 text-left">Reason</th>
+                                <th class="px-4 py-3 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr class="border-t">
+                                <td class="px-4 py-3">
+                                    {{ booking.room }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ booking.registered_by.username }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ booking.date }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ booking.start_time }} – {{ booking.end_time }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ booking.reason|truncatechars:40 }}
+                                </td>
+                                <td class="px-4 py-3 space-x-2">
+                                    <a href="{% url 'handle_room_booking' booking.id 'approve' %}"
+                                    class="text-green-600 hover:underline">
+                                        Approve
+                                    </a>
+                                    |
+                                    <a href="{% url 'handle_room_booking' booking.id 'reject' %}"
+                                    class="text-red-600 hover:underline">
+                                        Reject
+                                    </a>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-gray-500">No pending room booking requests.</p>
+            {% endif %}
+
+        </div>
+    </body>
+</html>

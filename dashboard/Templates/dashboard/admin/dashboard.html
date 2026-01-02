@@ -1,0 +1,65 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style> 
+    </head>
+    <body class="bg-gray-100">
+
+        <!-- TOP NAVBAR -->
+        <header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
+            <h1 class="text-2xl font-bold text-blue-800">CampusHub</h1>
+    
+            <a href="{% url 'logout' %}" 
+               class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                Logout
+            </a>
+        </header>
+    
+        <!-- SIDEBAR + MAIN CONTENT WRAPPER -->
+        <div class="flex pt-20">  <!-- padding top so it doesn't overlap header -->
+    
+            <!-- SIDEBAR -->
+            <aside class="w-[22%] bg-blue-900 text-white h-screen p-6 fixed left-0 top-20">
+    
+                <h2 class="text-xl font-semibold mb-6">Menu</h2>
+    
+                <nav class="flex flex-col gap-3">
+    
+                        <a href="{%url 'manage_users' %}" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Manage Users</a>
+                        <a href="{%url 'approve_rooms' %}" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Approve Rooms</a>
+                        <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Approvals</a>
+                        <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Event Management</a>
+    
+                </nav>
+            </aside>
+    
+            <!-- MAIN CONTENT -->
+            <main class="ml-[22%] w-full p-10">
+    
+                <h2 class="text-3xl font-bold text-gray-800">
+                    Welcome, {{ user.username }}
+                </h2>
+    
+                <p class="text-gray-600 text-lg mt-2">
+                    Please explore your CampusHub.
+                </p>
+    
+                <!-- CONTENT PLACEHOLDER -->
+                <div class="mt-10">
+                    <div class="p-6 bg-white rounded-lg shadow">
+                        <p class="text-gray-700">
+                            Select an option from the menu to continue.
+                        </p>
+                    </div>
+                </div>
+    
+            </main>
+        </div>
+    
+    </body>
+</html>

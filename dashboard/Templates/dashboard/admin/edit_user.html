@@ -1,0 +1,80 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 p-10 text-black">
+    <header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
+            <a href="{% url 'student_dashboard' %}" 
+                   class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                    ← 
+                </a>
+    
+            <a href="{% url 'logout' %}" 
+               class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                Logout
+            </a>
+        </header> 
+        <div class="max-w-xl mx-auto p-20 bg-white shadow rounded-lg">
+
+            <h2 class="text-xl font-semibold mb-6">
+                Edit User – {{ user_obj.username }}
+            </h2>
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <!-- Role -->
+                <div>
+                    <label class="block mb-1 font-medium">Role</label>
+                    <select name="role"
+                            class="w-full border px-4 py-2 rounded-lg">
+                        {% for value, label in roles %}
+                            <option value="{{ value }}"
+                                {% if user_obj.userprofile.role == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Department -->
+                <div>
+                    <label class="block mb-1 font-medium">Department</label>
+                    <select name="department"
+                            class="w-full border px-4 py-2 rounded-lg">
+                        <option value="">— None —</option>
+                        {% for value, label in departments %}
+                            <option value="{{ value }}"
+                                {% if user_obj.userprofile.department == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Active -->
+                <div class="flex items-center gap-2">
+                    <input type="checkbox"
+                        name="is_active"
+                        {% if user_obj.is_active %}checked{% endif %}>
+                    <label>Active</label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-between mt-6">
+                    <button class="bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        Save Changes
+                    </button>
+
+                    <a href="{% url 'manage_users' %}"
+                    class="text-gray-600 hover:underline">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+        </div>
+</body>
+</html>

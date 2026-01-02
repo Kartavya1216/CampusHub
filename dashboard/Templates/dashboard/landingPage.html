@@ -1,0 +1,238 @@
+{%load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            } 
+        </style>
+    </head>
+    <body class="bg-white text-black">
+
+        <nav class="fixed top-0 left-0 right-0 shadow bg-white z-50">
+            <div class="flex items-center justify-between px-6 py-4">
+        
+                <!-- LOGO -->
+                <a class="text-blue-700 font-bold text-4xl">CampusHub</a>
+        
+                <!-- DESKTOP MENU (visible on md and above) -->
+                <div class="hidden md:flex gap-6 items-center">
+        
+                    <a href="#hero" class="text-xl px-3 py-2 rounded-md hover:bg-blue-700 hover:text-white transition">
+                        Home
+                    </a>
+        
+                    <a href="#features" class="text-xl px-3 py-2 rounded-md hover:bg-blue-700 hover:text-white transition">
+                        Key Features
+                    </a>
+        
+                    <a href="#about" class="text-xl px-3 py-2 rounded-md hover:bg-blue-700 hover:text-white transition">
+                        About Us
+                    </a>
+        
+                <!-- REGISTER -->
+                <a href="{% url 'register' %}" 
+                   class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                    Register
+                </a>
+                <!-- LOGIN -->
+                <a href="{% url 'login' %}"  class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                    Login
+                   </a>
+                </div>
+        
+                <!-- HAMBURGER (visible only on mobile) -->
+                <button id="hamburgerBtn" class="md:hidden text-4xl focus:outline-none">
+                    ☰
+                </button>
+            </div>
+        
+            <!-- MOBILE MENU (hidden by default) -->
+            <div id="mobileMenu" class="hidden flex-col px-6 pb-4 space-y-3 md:hidden">
+        
+                <a href="#hero" class="text-lg px-3 py-2 rounded-md hover:bg-blue-700 hover:text-white transition">
+                    Home
+                </a>
+        
+                <a href="#features" class="text-lg px-3 py-2 rounded-md hover:bg-blue-700 hover:text-white transition">
+                    Key Features
+                </a>
+        
+                <a href="#about" class="text-lg px-3 py-2 rounded-md hover:bg-blue-700 hover:text-white transition">
+                    About Us
+                </a>
+        
+                <a href="{% url 'register'%}" class="px-3 py-2 border-2 border-black rounded-lg text-lg hover:bg-black hover:text-white">
+                    Register
+                </a>
+        
+                <a href="{%url 'login'  %}" class="px-3 py-2 border-2 border-black rounded-lg text-lg hover:bg-black hover:text-white">
+                    Login
+                </a>
+        
+            </div>
+        </nav>
+        
+        <main class="pt-24">
+            <div>
+                <section id="hero" class="min-h-[70vh] flex flex-col justify-center px-8">
+                    <h1 class="text-5xl md:text-6xl font-bold leading-tight">
+                        Managing Campus Seems Difficult?
+                    </h1>
+                
+                    <p class="mt-6 text-gray-700 text-xl md:text-2xl max-w-2xl">
+                        We have a complete solution. Explore how 
+                        <span class="font-bold text-blue-700">CampusHub</span> 
+                        streamlines notices, rooms, events, and maintenance. 👇
+                    </p>
+                
+                    <div class="mt-10 flex gap-4">
+                        <a href="#features" 
+                           class="px-6 py-3 bg-blue-700 text-white rounded-md text-lg hover:bg-blue-800 transition">
+                           Explore Features
+                        </a>
+                
+                        <a href="#about" 
+                           class="px-6 py-3 border-2 border-blue-700 text-blue-700 text-lg rounded-md hover:bg-blue-700 hover:text-white transition">
+                           About Us
+                        </a>
+                    </div>
+                </section>
+                <!-- SECTION IMAGE BETWEEN HERO & FEATURES -->
+                <div class="w-full flex justify-center  mb-10">
+                    <img src="{% static 'images/CMS2.png' %}" 
+                        alt="CampusHub Illustration"
+                        class="w-full  rounded-xl h-[600px]">
+                </div>
+
+                <!-- FEATURES: cards that show details directly BELOW when clicked -->
+                <section id="features" class="mt-10 px-8 py-12">
+                    <h2 class="text-3xl font-bold text-center">Key Features</h2>
+                
+                    <div class="max-w-4xl mx-auto mt-10">
+                        <div class="flex flex-wrap justify-center gap-4">
+                            
+                            <!-- Room Booking -->
+                            <div class="feature-wrapper w-full sm:w-auto">
+                                <button 
+                                    class="px-9 py-3 text-base bg-blue-100 text-blue-700 text-2xl hover:bg-blue-200 transition"
+                                    data-smallcard="roombooking">
+                                    Room Booking
+                                </button>
+                
+                                <div id="detail-roombooking" class="hidden mt-3 p-4 bg-gray-50 border rounded-md text-gray-700 w-fit max-w-[300px] font-bold">
+                                    <p>Reserve classrooms, labs, and conference halls. Admin approval supported.</p>
+                                </div>
+                            </div>
+                
+                            <!-- Event Management -->
+                            <div class="feature-wrapper w-full sm:w-auto">
+                                <button 
+                                    class="px-9 py-3 text-base bg-blue-100 text-blue-700  text-2xl hover:bg-blue-200 transition"
+                                    data-smallcard="events">
+                                    Event Management
+                                </button>
+                
+                                <div id="detail-events" class="hidden mt-3 p-4 bg-gray-50 border rounded-md text-gray-700 w-fit max-w-[300px] font-bold">
+                                    <p>Manage events, schedules, registrations, and calendars with ease.</p>
+                                </div>
+                            </div>
+                
+                            <!-- Maintenance -->
+                            <div class="feature-wrapper w-full sm:w-auto">
+                                <button 
+                                    class="px-9 py-3 text-base bg-blue-100 text-blue-700 text-2xl hover:bg-blue-200 transition"
+                                    data-smallcard="maintenance">
+                                    Maintenance Requests
+                                </button>
+                
+                                <div id="detail-maintenance" class="hidden mt-3 p-4 bg-gray-50 border rounded-md text-gray-700 w-fit max-w-[300px] font-bold">
+                                    <p>Submit maintenance tickets and track resolution by staff.</p>
+                                </div>
+                            </div>
+                
+                            <!-- Notices -->
+                            <div class="feature-wrapper w-full sm:w-auto">
+                                <button 
+                                    class="px-9 py-3 text-base bg-blue-100 text-blue-700 text-2xl hover:bg-blue-200 transition"
+                                    data-smallcard="notices">
+                                    Notices & Alerts
+                                </button>
+                
+                                <div id="detail-notices" class="hidden mt-3 p-4 bg-gray-50 border rounded-md text-gray-700 w-fit max-w-[300px] font-bold">
+                                    <p>Post announcements with optional attachments.</p>
+                                </div>
+                            </div>
+                
+                            <!-- Study Material -->
+                            <div class="feature-wrapper w-full sm:w-auto">
+                                <button 
+                                    class="px-9 py-3 text-base bg-blue-100 text-blue-700 text-2xl hover:bg-blue-200 transition"
+                                    data-smallcard="studymaterial">
+                                    Study Material / Notes
+                                </button>
+                
+                                <div id="detail-studymaterial" class="hidden mt-3 p-4 bg-gray-50 border rounded-md text-gray-700 w-fit max-w-[300px] font-bold">
+                                    <p>Access notes, PDFs, assignments, and learning material uploaded by faculty.</p>
+                                </div>
+                            </div>
+                
+                        </div>
+                    </div>
+                </section>
+                <section id="about" class="mt-28 px-8 py-16 bg-white">
+                    <div class="max-w-6xl mx-auto text-center">
+                
+                        <h2 class="text-3xl font-bold">About CampusHub</h2>
+                
+                        <p class="mt-6 text-gray-600 text-xl leading-relaxed">
+                            CampusHub is a centralized web-based platform designed to simplify daily campus operations.
+                            It connects students, faculty, and staff into a single interface, providing tools for room booking,
+                            event management, maintenance requests, study material sharing, and campus-wide notices.
+                        </p>
+                
+                        <p class="mt-4 text-gray-600 text-xl leading-relaxed">
+                            This project demonstrates a real-world, fully functional campus management solution built using Django,
+                            TailwindCSS, and modern design principles. It is developed as a portfolio-ready project to showcase
+                            both backend and frontend capabilities.
+                        </p>
+                
+                        <div class="mt-8">
+                            <a href="#features" class="px-6 py-3 bg-blue-700 text-white rounded-md hover:bg-blue-800">
+                                Explore Features Again
+                            </a>
+                        </div>
+                
+                    </div>
+                </section>
+                
+                  
+            </div>           
+        </main> 
+        <script>
+            document.querySelectorAll('[data-smallcard]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-smallcard');
+                    const panel = document.getElementById('detail-' + id);
+            
+                    // Close all other open panels
+                    document.querySelectorAll('.feature-wrapper .mt-2').forEach(el => {
+                        if (el !== panel) el.classList.add('hidden');
+                    });
+            
+                    // Toggle clicked one
+                    panel.classList.toggle('hidden');
+                });
+            });
+            const hamburgerBtn = document.getElementById("hamburgerBtn");
+            const mobileMenu = document.getElementById("mobileMenu");
+
+            hamburgerBtn.addEventListener("click", () => {
+                mobileMenu.classList.toggle("hidden");
+            });
+            </script>
+            
+                       
+    </body>   
+</html>

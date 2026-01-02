@@ -1,0 +1,58 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 min-h-screen flex items-center justify-center">
+
+        <div class="max-w-md w-full bg-white p-8 rounded-lg shadow">
+          <h1 class="text-3xl font-bold text-center mb-6">Login to CampusHub</h1>
+      
+          {% if messages %}
+            {% for message in messages %}
+              <div class="mb-3 text-sm text-red-600">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+      
+          <form method="post">
+            {% csrf_token %}
+      
+            <!-- username -->
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium">Email</label>
+              <input type="text" name="email"
+                     class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300 outline-none" 
+                     required>
+            </div>
+      
+            <!-- password -->
+            <div class="mb-6">
+              <label class="block text-gray-700 font-medium">Password</label>
+              <input type="password" name="password"
+                     class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300 outline-none" 
+                     required>
+            </div>
+      
+            <!-- submit -->
+            <button type="submit"
+                    class="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-800 transition">
+              Login
+            </button>
+      
+          </form>
+      
+          <p class="mt-4 text-sm text-gray-600 text-center">
+            Don’t have an account?
+            <a href="{% url 'register' %}" class="text-blue-700 font-medium">
+              Register
+            </a>
+          </p>
+        </div>
+      
+      </body>
+</html>

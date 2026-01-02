@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+</head>
+
+<body class="bg-white text-gray-800 min-h-screen">
+
+<!-- TOP NAVBAR -->
+<header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
+    <a href="{% url 'student_dashboard' %}" 
+                   class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                    ← 
+                </a>
+    <h1 class="text-2xl font-bold text-blue-800">CampusHub</h1>
+
+    <a href="{% url 'logout' %}"
+       class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+        Logout
+    </a>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="pt-24 px-6 pb-12 max-w-6xl mx-auto bg-white">
+
+    <h2 class="text-3xl font-bold mb-8 text-center">Notices</h2>
+
+    {% for notice in notices %}
+    <div class="bg-gray-100 border rounded-lg shadow-sm p-6 mb-6">
+
+        <h3 class="text-xl font-semibold mb-1">
+            {{ notice.title }}
+        </h3>
+
+
+        <p class="text-sm text-gray-500 mb-3">
+            Posted by {{ notice.posted_by.username }}
+            • {{ notice.created_at|date:"d M Y, h:i A" }}
+        </p>
+
+        <p class="notice-content text-gray-700 leading-relaxed line-clamp-1">
+            {{ notice.content }}
+        </p>
+
+        <button
+            class="notice-toggle text-blue-600 text-sm mt-2 hidden hover:underline">
+            More
+        </button>
+        
+        {% if notice.attachment %}
+        <div class="mt-4">
+            <a href="{{ notice.attachment.url }}"
+               target="_blank"
+               class="text-blue-700 font-medium hover:underline">
+                📎 View Attachment
+            </a>
+        </div>
+        {% endif %}
+
+
+    </div>
+    {% empty %}
+        <p class="text-center text-gray-500">No notices available.</p>
+    {% endfor %}
+
+</main>
+
+<script>
+document.querySelectorAll('.notice-content').forEach(content => {
+    const btn = content.nextElementSibling;
+
+    if (content.scrollHeight > content.clientHeight) {
+        btn.classList.remove('hidden');
+    }
+
+    btn.addEventListener('click', () => {
+        content.classList.toggle('line-clamp-1');
+
+        btn.textContent = content.classList.contains('line-clamp-1')
+            ? 'More'
+            : 'Less';
+    });
+});
+</script>
+
+</body>
+</html>
