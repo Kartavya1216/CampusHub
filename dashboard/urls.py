@@ -22,6 +22,8 @@ urlpatterns = [
     path('dashboard/admin/users/<int:user_id>/edit/',views.edit_user,name='edit_user'),
     path('dashboard/admin/rooms',views.approve_rooms , name='approve_rooms'),
     path('dashboard/admin/rooms/<int:booking_id>/<str:action>/',views.handle_room_booking,name='handle_room_booking'),
+    path('dashboard/admin/events',views.approve_events , name='approve_events'),
+    path('dashboard/admin/events/<int:event_id>/<str:action>/',views.handle_event_approval,name='handle_event_approval'),
 ]
 
 

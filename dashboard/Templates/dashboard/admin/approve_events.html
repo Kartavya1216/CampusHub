@@ -1,0 +1,77 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 text-black">
+
+    <!-- Header -->
+    <header class="w-full bg-white shadow flex items-center justify-between 
+                   px-6 py-4 fixed top-0 left-0 right-0 z-40">
+
+        <a href="{% url 'student_dashboard' %}" 
+           class="px-3 py-2 border-2 border-black rounded-lg text-xl 
+                  hover:bg-black hover:text-white transition">
+            ←
+        </a>
+
+        <a href="{% url 'logout' %}" 
+           class="px-4 py-2 bg-red-600 text-white rounded-md 
+                  hover:bg-red-700 transition">
+            Logout
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 px-10 pb-10">
+
+        <h1 class="text-2xl font-semibold mb-6">
+            Pending Event Requests
+        </h1>
+
+        {% if events %}
+            <div class="overflow-x-auto bg-white shadow rounded-lg">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Title</th>
+                            <th class="px-4 py-3 text-left">Created By</th>
+                            <th class="px-4 py-3 text-left">Date</th>
+                            <th class="px-4 py-3 text-left">Time</th>
+                            <th class="px-4 py-3 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr class="border-t">
+                            <td class="px-4 py-3">{{ event.title }}</td>
+                            <td class="px-4 py-3">{{ event.created_by.username }}</td>
+                            <td class="px-4 py-3">{{ event.date }}</td>
+                            <td class="px-4 py-3">
+                                {{ event.start_time }} – {{ event.end_time }}
+                            </td>
+                            <td class="px-4 py-3 space-x-2">
+                                <a href="{% url 'handle_event_approval' event.id 'approve' %}"
+                                   class="text-green-600 hover:underline">
+                                    Approve
+                                </a>
+                                |
+                                <a href="{% url 'handle_event_approval' event.id 'reject' %}"
+                                   class="text-red-600 hover:underline">
+                                    Reject
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-gray-500">No pending event requests.</p>
+        {% endif %}
+
+    </main>
+
+</body>
+</html>

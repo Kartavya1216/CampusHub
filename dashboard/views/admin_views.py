@@ -6,6 +6,7 @@ from .auth_views import redirect_to_dashboard
 from django.contrib import messages
 from rooms.models import RoomBooking
 from notices.models import Notice
+from events.models import Event
 from django.utils import timezone
 from datetime import timedelta
 
@@ -107,3 +108,53 @@ def handle_room_booking(request, booking_id, action):
 
     booking.save()
     return redirect('approve_rooms')
+
+@login_required
+def approve_events(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+    events = Event.objects.filter(status='Pending').order_by('date','start_time')
+    return render(request,'dashboard/admin/approve_events.html',{'events':events})
+
+@login_required
+def handle_event_approval(request, event_id , action):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+    event = get_object_or_404(Event , id=event_id)
+
+    if event.status != 'Pending':
+        messages.warning(request , 'This event has already been proccessed !!')
+        return redirect('approve_events')
+    if action == 'approve' :
+        event.status = 'Approved'
+        Notice.objects.create(
+            title=f"New Event Approved: {event.title}",
+            posted_by=request.user,
+            content=(
+                f"The event '{event.title}' has been approved and will take place on "
+                f"{event.date} from {event.start_time} to {event.end_time}.\n\n"
+                f"Description: {event.description}"
+            ),
+            expires_at=timezone.now() + timedelta(hours=24)
+        )
+        messages.success(request , 'Event Approved')
+    elif action == 'reject' :
+        event.status = 'Rejected'
+        Notice.objects.create(
+            title=f"New Event Rejected: {event.title}",
+            posted_by=request.user,
+            content=(
+                f"The event '{event.title}' has been rejected and will not take place on "
+                f"{event.date} from {event.start_time} to {event.end_time}.\n\n"
+                f"Description: {event.description}"
+            ),
+            expires_at=timezone.now() + timedelta(hours=24)
+        )
+        messages.success(request , 'Event Rejected')
+    else:
+        messages.error(request, 'Invalid action.')
+        return redirect('approve_events')     
+    event.save()
+    return redirect('approve_events')
