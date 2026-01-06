@@ -8,7 +8,7 @@ from django.http import Http404
 from users.models import UserProfile
 from rooms.models import Building, Room, RoomBooking
 from notes.models import Semester, Subject
-from notices.models import Notice
+from notices.models import Notice , UserNoticeStatus
 from events.models import Event
 from events.forms import EventForm
 from .auth_views import redirect_to_dashboard
@@ -96,9 +96,10 @@ def room_booking_submit(request):
 
 @login_required
 def notices_view(request):
+    hidden_notice_ids = UserNoticeStatus.objects.filter(user=request.user ,cleared=True).values_list('notice_id',flat=True)
     notices = Notice.objects.filter(
         is_active=True
-    ).order_by('-created_at')
+    ).exclude(id__in=hidden_notice_ids).order_by('-created_at')
 
     return render(request, 'dashboard/student/notices.html', {
         'notices': notices
@@ -188,3 +189,14 @@ def add_event(request):
         form = EventForm()
 
     return render(request, 'dashboard/student/add_event.html', {'form': form})
+
+@login_required
+def clear_student_notices(request):
+    if request.method == 'POST':
+        notices = Notice.objects.filter(is_active=True)
+        for notice in notices:
+            UserNoticeStatus.objects.get_or_create(user=request.user , notice=notice , defaults={'cleared':True})
+
+        messages.success(request , 'Your Inbox has been cleared')
+
+    return redirect('notices')        

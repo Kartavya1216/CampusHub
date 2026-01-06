@@ -25,6 +25,18 @@
 <main class="pt-24 px-6 pb-12 max-w-6xl mx-auto bg-white">
 
     <h2 class="text-3xl font-bold mb-8 text-center">Notices</h2>
+    <div class="flex justify-end mb-4">
+        <form method="POST" action="{% url 'clear_student_notices' %}">
+            {% csrf_token %}
+            <button
+                type="submit"
+                onclick="return confirm('Clear all notices from your inbox?')"
+                class="px-4 py-2 bg-gray-700 text-white rounded-md
+                    hover:bg-gray-800 transition">
+                Clear Inbox
+            </button>
+        </form>
+    </div>
 
     {% for notice in notices %}
     <div class="bg-gray-100 border rounded-lg shadow-sm p-6 mb-6">

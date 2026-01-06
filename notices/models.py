@@ -9,3 +9,11 @@ class Notice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+class UserNoticeStatus(models.Model):
+    notice = models.ForeignKey(Notice , on_delete=models.CASCADE) 
+    user = models.ForeignKey(User , on_delete=models.CASCADE)
+    cleared = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together=  ['user','notice']   

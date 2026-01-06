@@ -16,6 +16,7 @@ urlpatterns = [
     path('dashboard/student/roomBook/submit-roomRequest/',views.room_booking_submit , name='room_booking_submit'),
     path('dashboard/student/study-material/', views.study_material_view , name='study_material'),
     path('dashboard/student/notices/', views.notices_view, name='notices'),
+    path('dashboard/student/notices/clear', views.clear_student_notices , name='clear_student_notices'),
     path('dashboard/student/events/',views.events_view,name='events'),
     path('dashboard/student/events/add/', views.add_event, name='add_event'),
     path('dashboard/admin/users',views.manage_users , name='manage_users'),
