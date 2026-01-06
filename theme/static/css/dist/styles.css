@@ -1075,6 +1075,57 @@ html {
   content: var(--tw-content);
 }
 
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--rounded-box, 1rem);
+}
+
+.card:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.card figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card.image-full {
+  display: grid;
+}
+
+.card.image-full:before {
+  position: relative;
+  content: "";
+  z-index: 10;
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--n) / var(--tw-bg-opacity));
+  opacity: 0.75;
+  border-radius: var(--rounded-box, 1rem);
+}
+
+.card.image-full:before,
+    .card.image-full > * {
+  grid-column-start: 1;
+  grid-row-start: 1;
+}
+
+.card.image-full > figure img {
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.card.image-full > .card-body {
+  position: relative;
+  z-index: 20;
+  --tw-text-opacity: 1;
+  color: hsl(var(--nc) / var(--tw-text-opacity));
+}
+
 .checkbox {
   flex-shrink: 0;
   --chkbg: var(--bc);
@@ -1089,6 +1140,22 @@ html {
   border-color: hsl(var(--bc) / var(--tw-border-opacity));
   --tw-border-opacity: 0.2;
   border-radius: var(--rounded-btn, 0.5rem);
+}
+
+.\!checkbox {
+  flex-shrink: 0 !important;
+  --chkbg: var(--bc) !important;
+  --chkfg: var(--b1) !important;
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  cursor: pointer !important;
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  border-width: 1px !important;
+  border-color: hsl(var(--bc) / var(--tw-border-opacity)) !important;
+  --tw-border-opacity: 0.2 !important;
+  border-radius: var(--rounded-btn, 0.5rem) !important;
 }
 
 @media (hover: hover) {
@@ -1500,11 +1567,56 @@ html {
   }
 }
 
+.card :where(figure:first-child) {
+  overflow: hidden;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+  border-end-start-radius: unset;
+  border-end-end-radius: unset;
+}
+
+.card :where(figure:last-child) {
+  overflow: hidden;
+  border-start-start-radius: unset;
+  border-start-end-radius: unset;
+  border-end-start-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+.card:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.card.bordered {
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: hsl(var(--b2) / var(--tw-border-opacity));
+}
+
+.card.compact .card-body {
+  padding: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.card.image-full :where(figure) {
+  overflow: hidden;
+  border-radius: inherit;
+}
+
 .checkbox:focus-visible {
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
   outline-color: hsl(var(--bc) / 1);
+}
+
+.\!checkbox:focus-visible {
+  outline-style: solid !important;
+  outline-width: 2px !important;
+  outline-offset: 2px !important;
+  outline-color: hsl(var(--bc) / 1) !important;
 }
 
 .checkbox:checked,
@@ -1527,6 +1639,26 @@ html {
       linear-gradient(-45deg, hsl(var(--chkfg)) 50%, hsl(var(--chkbg)) 50.99%);
 }
 
+.\!checkbox:checked,
+  .\!checkbox[checked="true"],
+  .\!checkbox[aria-checked="true"] {
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--bc) / var(--tw-bg-opacity)) !important;
+  background-repeat: no-repeat !important;
+  animation: checkmark var(--animation-input, 0.2s) ease-out !important;
+  background-image: linear-gradient(-45deg, transparent 65%, hsl(var(--chkbg)) 65.99%),
+      linear-gradient(45deg, transparent 75%, hsl(var(--chkbg)) 75.99%),
+      linear-gradient(-45deg, hsl(var(--chkbg)) 40%, transparent 40.99%),
+      linear-gradient(
+        45deg,
+        hsl(var(--chkbg)) 30%,
+        hsl(var(--chkfg)) 30.99%,
+        hsl(var(--chkfg)) 40%,
+        transparent 40.99%
+      ),
+      linear-gradient(-45deg, hsl(var(--chkfg)) 50%, hsl(var(--chkbg)) 50.99%) !important;
+}
+
 .checkbox:indeterminate {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
@@ -1543,12 +1675,36 @@ html {
       );
 }
 
+.\!checkbox:indeterminate {
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--bc) / var(--tw-bg-opacity)) !important;
+  background-repeat: no-repeat !important;
+  animation: checkmark var(--animation-input, 0.2s) ease-out !important;
+  background-image: linear-gradient(90deg, transparent 80%, hsl(var(--chkbg)) 80%),
+      linear-gradient(-90deg, transparent 80%, hsl(var(--chkbg)) 80%),
+      linear-gradient(
+        0deg,
+        hsl(var(--chkbg)) 43%,
+        hsl(var(--chkfg)) 43%,
+        hsl(var(--chkfg)) 57%,
+        hsl(var(--chkbg)) 57%
+      ) !important;
+}
+
 .checkbox:disabled {
   cursor: not-allowed;
   border-color: transparent;
   --tw-bg-opacity: 1;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
   opacity: 0.2;
+}
+
+.\!checkbox:disabled {
+  cursor: not-allowed !important;
+  border-color: transparent !important;
+  --tw-bg-opacity: 1 !important;
+  background-color: hsl(var(--bc) / var(--tw-bg-opacity)) !important;
+  opacity: 0.2 !important;
 }
 
 @keyframes checkmark {
@@ -1579,6 +1735,22 @@ html {
           transparent 40.99%
         ),
         linear-gradient(45deg, hsl(var(--chkfg)) 50%, hsl(var(--chkbg)) 50.99%);
+}
+
+[dir="rtl"] .\!checkbox:checked,
+    [dir="rtl"] .\!checkbox[checked="true"],
+    [dir="rtl"] .\!checkbox[aria-checked="true"] {
+  background-image: linear-gradient(45deg, transparent 65%, hsl(var(--chkbg)) 65.99%),
+        linear-gradient(-45deg, transparent 75%, hsl(var(--chkbg)) 75.99%),
+        linear-gradient(45deg, hsl(var(--chkbg)) 40%, transparent 40.99%),
+        linear-gradient(
+          -45deg,
+          hsl(var(--chkbg)) 30%,
+          hsl(var(--chkfg)) 30.99%,
+          hsl(var(--chkfg)) 40%,
+          transparent 40.99%
+        ),
+        linear-gradient(45deg, hsl(var(--chkfg)) 50%, hsl(var(--chkbg)) 50.99%) !important;
 }
 
 .input input:focus {
@@ -2099,6 +2271,14 @@ html {
   position: fixed;
 }
 
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
 .left-0 {
   left: 0px;
 }
@@ -2113,6 +2293,14 @@ html {
 
 .top-20 {
   top: 5rem;
+}
+
+.right-4 {
+  right: 1rem;
+}
+
+.top-4 {
+  top: 1rem;
 }
 
 .z-40 {
@@ -2238,6 +2426,10 @@ html {
   height: 100vh;
 }
 
+.h-4 {
+  height: 1rem;
+}
+
 .min-h-\[70vh\] {
   min-height: 70vh;
 }
@@ -2275,6 +2467,10 @@ html {
   width: 100%;
 }
 
+.w-4 {
+  width: 1rem;
+}
+
 .min-w-full {
   min-width: 100%;
 }
@@ -2305,6 +2501,10 @@ html {
 
 .max-w-xl {
   max-width: 36rem;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
 }
 
 .cursor-pointer {
@@ -2341,6 +2541,10 @@ html {
 
 .items-center {
   align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -2393,6 +2597,10 @@ html {
 
 .overflow-x-auto {
   overflow-x: auto;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 
 .rounded {
@@ -2478,6 +2686,11 @@ html {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+.bg-blue-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -2513,6 +2726,11 @@ html {
 
 .p-8 {
   padding: 2rem;
+}
+
+.px-10 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
 }
 
 .px-3 {
@@ -2565,9 +2783,8 @@ html {
   padding-bottom: 1rem;
 }
 
-.px-10 {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
+.pb-10 {
+  padding-bottom: 2.5rem;
 }
 
 .pb-12 {
@@ -2584,10 +2801,6 @@ html {
 
 .pt-24 {
   padding-top: 6rem;
-}
-
-.pb-10 {
-  padding-bottom: 2.5rem;
 }
 
 .text-left {
@@ -2815,6 +3028,11 @@ html {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-red-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
 
 .hover\:underline:hover {

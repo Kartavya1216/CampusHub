@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+    </head>
+    <body class="bg-white text-gray-800 min-h-screen">
+        <header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
+            <a href="{% url 'student_dashboard' %}" 
+                        class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+                            ← 
+                        </a>
+            <h1 class="text-2xl font-bold text-blue-800">CampusHub</h1>
+
+            <a href="{% url 'logout' %}"
+            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                Logout
+            </a>
+        </header>
+        <main class="pt-24 px-6 pb-12 max-w-6xl mx-auto bg-white">
+        <div class="p-6">
+            <div class="flex gap-4 mb-6">
+                <form method="get" class="w-[70%]">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search_query }}"
+                        placeholder="Search events..."
+                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                </form>
+
+                <a href="{% url 'add_event' %}"
+                class="w-[30%] text-center bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 transition">
+                    + Add Event
+                </a>
+            </div>
+            {% if events %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for event in events %}
+                        <div class="border rounded-lg shadow hover:shadow-lg transition bg-white">
+
+                            {% if event.poster %}
+                                <img src="{{ event.poster.url }}"
+                                    class="h-40 w-full object-cover rounded-t-lg">
+                            {% endif %}
+
+                            <div class="p-4">
+                                <h3 class="text-lg font-semibold">{{ event.title }}</h3>
+
+                                <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+                                    {{ event.description }}
+                                </p>
+
+                                <p class="text-sm mt-2 text-gray-500">
+                                    Date :{{ event.date }} |
+                                    Timing :{{ event.start_time }} – {{ event.end_time }}
+                                </p>
+
+                                {% if event.department or event.target_role %}
+                                    <p class="text-xs mt-2 text-blue-700 font-medium">
+                                        {% if event.department %}{{ event.department }}{% endif %}
+                                        {% if event.target_role %} | {{ event.target_role }}{% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center mt-10">
+                    No upcoming events found.
+                </p>
+            {% endif %}
+
+        </div>
+        </main>
+    </body>
+</html>

@@ -111,28 +111,40 @@ def study_material_view(request):
     department = profile.department
 
     semesters = Semester.objects.filter(department=department).order_by("semester_number")
+
+    selected_semester = None
+    subjects = None
     semester_id = request.GET.get("semester")
 
     if semester_id:
         try:
             selected_semester = Semester.objects.get(id=semester_id, department=department)
         except Semester.DoesNotExist:
-            raise Http404
+            raise Http404("Semester not found for your department.")
 
-        subjects = selected_semester.subjects.all()
-    else:
-        subjects = None
-        selected_semester = None
+        subjects = selected_semester.subjects.all().order_by("name")
 
-    return render(
-        request,
-        "dashboard/student/study_material.html",
-        {
-            "semesters": semesters,
-            "subjects": subjects,
-            "selected_semester": selected_semester,
-        }
-    )
+    selected_subject = None
+    materials = None
+    subject_id = request.GET.get("subject")
+
+    if subject_id:
+        try:
+            selected_subject = Subject.objects.get(id=subject_id, semester__department=department)
+        except Subject.DoesNotExist:
+            raise Http404("Subject not found for your department.")
+
+        materials = selected_subject.materials.all().order_by("-id")
+
+    context = {
+        "department": department,
+        "semesters": semesters,
+        "selected_semester": selected_semester,
+        "subjects": subjects,
+        "selected_subject": selected_subject,
+        "materials": materials,
+    }
+    return render(request, "dashboard/student/study_material.html", context)
 
 @login_required
 def events_view(request):

@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+</head>
+
+<body class="bg-white text-gray-800 min-h-screen">
+
+<header class="w-full bg-white shadow flex items-center justify-between
+               px-6 py-4 fixed top-0 left-0 right-0 z-40">
+    <a href="{% url 'admin_dashboard' %}"
+       class="px-3 py-2 border-2 border-black rounded-lg text-xl
+              hover:bg-black hover:text-white">
+        ←
+    </a>
+
+    <h1 class="text-2xl font-bold text-blue-800">Admin Notices</h1>
+
+    <a href="{% url 'logout' %}"
+       class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+        Logout
+    </a>
+</header>
+
+<main class="pt-24 px-6 pb-12 max-w-6xl mx-auto">
+    <form method="GET" class="mb-6">
+        <div class="flex items-center gap-4">
+            <input
+                type="text"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search notices..."
+                class="flex-1 border rounded px-4 py-2
+                    focus:outline-none focus:ring"
+            />
+
+            <a href="{% url 'create_notice' %}"
+            class="px-4 py-2 bg-blue-700 text-white rounded-md
+                    hover:bg-blue-800 transition whitespace-nowrap">
+                + Create Notice
+            </a>
+        </div>
+    </form>
+
+    <form id="bulkDeleteForm" method="POST" action="{% url 'bulk_delete_notices' %}">
+    {% csrf_token %}
+
+    <div id="actionBar"
+         class="hidden flex items-center justify-between mb-4 bg-gray-100 p-3 rounded">
+
+        <div class="flex items-center gap-3">
+            <input type="checkbox" id="selectAll" class="h-4 w-4 cursor-pointer">
+            <span class="text-sm text-gray-700">Select all</span>
+        </div>
+
+        <button type="submit"
+                class="flex items-center gap-2 text-red-600 hover:text-red-800"
+                onclick="return confirm('Delete selected notices?')">
+            Delete
+        </button>
+    </div>
+
+    {% if notices %}
+        {% for notice in notices %}
+        <div class="notice-card bg-gray-100 border rounded-lg shadow-sm p-6 mb-6 cursor-pointer relative" data-id="{{ notice.id }}">
+
+            <input type="checkbox" name="notice_ids" value="{{ notice.id }}" class="notice-checkbox hidden absolute top-4 right-4">
+
+
+            <h3 class="text-xl font-semibold mb-1">
+                {{ notice.title }}
+            </h3>
+
+            <p class="text-sm text-gray-500 mb-3">
+                Posted by {{ notice.posted_by.username }}
+                • {{ notice.created_at|date:"d M Y, h:i A" }}
+            </p>
+
+            <p class="notice-content text-gray-700 leading-relaxed line-clamp-1">
+            {{ notice.content }}
+        </p>
+            <button
+            class="notice-toggle text-blue-600 text-sm mt-2 hidden hover:underline">
+            More
+        </button>
+        
+        {% if notice.attachment %}
+        <div class="mt-4">
+            <a href="{{ notice.attachment.url }}"
+               target="_blank"
+               class="text-blue-700 font-medium hover:underline">
+                📎 View Attachment
+            </a>
+        </div>
+        {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center text-gray-500">
+            No notices found.
+        </p>
+    {% endif %}
+
+</main>
+<script>
+/* -------------------------------
+   NOTICE: More / Less toggle
+-------------------------------- */
+document.querySelectorAll('.notice-card').forEach(card => {
+    const content = card.querySelector('.notice-content');
+    const toggleBtn = card.querySelector('.notice-toggle');
+
+    if (!content || !toggleBtn) return;
+
+    // Show "More" only if content overflows
+    if (content.scrollHeight > content.clientHeight) {
+        toggleBtn.classList.remove('hidden');
+    }
+
+    toggleBtn.addEventListener('click', e => {
+        e.stopPropagation(); // prevent card selection
+        content.classList.toggle('line-clamp-1');
+
+        toggleBtn.textContent = content.classList.contains('line-clamp-1')
+            ? 'More'
+            : 'Less';
+    });
+});
+
+/* -------------------------------
+   NOTICE: Selection Logic
+-------------------------------- */
+const cards = document.querySelectorAll('.notice-card');
+const actionBar = document.getElementById('actionBar');
+const selectAll = document.getElementById('selectAll');
+
+function updateActionBar() {
+    const checkedCount = document.querySelectorAll('.notice-checkbox:checked').length;
+    actionBar.classList.toggle('hidden', checkedCount === 0);
+}
+
+cards.forEach(card => {
+    card.addEventListener('click', e => {
+
+        // Ignore clicks on controls
+        if (
+            e.target.closest('.notice-toggle') ||
+            e.target.closest('a') ||
+            e.target.closest('.notice-checkbox')
+        ) {
+            return;
+        }
+
+        const checkbox = card.querySelector('.notice-checkbox');
+        checkbox.checked = !checkbox.checked;
+
+        checkbox.classList.remove('hidden');
+        card.classList.toggle('bg-blue-50', checkbox.checked);
+
+        updateActionBar();
+    });
+});
+
+/* -------------------------------
+   NOTICE: Select All
+-------------------------------- */
+selectAll.addEventListener('change', () => {
+    document.querySelectorAll('.notice-checkbox').forEach(cb => {
+        cb.checked = selectAll.checked;
+        cb.classList.remove('hidden');
+
+        cb.closest('.notice-card')
+          .classList.toggle('bg-blue-50', cb.checked);
+    });
+
+    updateActionBar();
+});
+
+/* -------------------------------
+   STOP PROPAGATION FOR LINKS & CHECKBOXES
+-------------------------------- */
+document.querySelectorAll('.notice-checkbox, a').forEach(el => {
+    el.addEventListener('click', e => e.stopPropagation());
+});
+</script>
+
+
+
+</body>
+</html>

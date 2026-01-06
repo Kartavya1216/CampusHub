@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+<header class="w-full bg-white shadow flex items-center justify-between
+               px-6 py-4 fixed top-0 left-0 right-0 z-40">
+    <a href="{% url 'admin_notices' %}"
+       class="px-3 py-2 border-2 border-black rounded-lg text-xl
+              hover:bg-black hover:text-white">
+        ←
+    </a>
+
+    <h1 class="text-2xl font-bold text-blue-800">Create Notice</h1>
+
+    <a href="{% url 'logout' %}"
+       class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+        Logout
+    </a>
+</header>
+
+<main class="pt-24 max-w-3xl mx-auto px-6">
+
+    <form method="POST" enctype="multipart/form-data"
+          class="bg-white shadow rounded-lg p-6">
+        {% csrf_token %}
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Title</label>
+            <input type="text" name="title"
+                   class="w-full border rounded px-3 py-2"
+                   required>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Content</label>
+            <textarea name="content" rows="6"
+                      class="w-full border rounded px-3 py-2"
+                      required></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">
+                Attachment (optional)
+            </label>
+            <input type="file" name="attachment"
+                   class="block w-full text-sm">
+        </div>
+
+        <div class="flex justify-end gap-3">
+            <a href="{% url 'admin_notices' %}"
+               class="px-4 py-2 border rounded">
+                Cancel
+            </a>
+
+            <button type="submit"
+                    class="px-4 py-2 bg-blue-700 text-white rounded
+                           hover:bg-blue-800">
+                Publish
+            </button>
+        </div>
+    </form>
+
+</main>
+
+</body>
+</html>
