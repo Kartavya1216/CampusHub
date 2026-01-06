@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import date
@@ -7,7 +7,7 @@ from django.http import Http404
 
 from users.models import UserProfile
 from rooms.models import Building, Room, RoomBooking
-from notes.models import Semester, Subject
+from notes.models import Semester, Subject , StudyMaterial
 from notices.models import Notice , UserNoticeStatus
 from events.models import Event
 from events.forms import EventForm
@@ -146,6 +146,27 @@ def study_material_view(request):
         "materials": materials,
     }
     return render(request, "dashboard/student/study_material.html", context)
+@login_required
+def subject_materials_view(request, subject_id):
+    profile = UserProfile.objects.get(user=request.user)
+
+    subject = get_object_or_404(
+        Subject,
+        id=subject_id,
+        semester__department=profile.department
+    )
+
+    materials = subject.materials.all().order_by('-id')
+
+    return render(
+        request,
+        'dashboard/student/subject_materials.html',
+        {
+            'subject': subject,
+            'materials': materials
+        }
+    )
+
 
 @login_required
 def events_view(request):

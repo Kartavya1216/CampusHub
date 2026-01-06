@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+<header class="w-full bg-white shadow flex items-center justify-between
+               px-6 py-4 fixed top-0 left-0 right-0 z-40">
+    <a href="{% url 'study_material' %}"
+       class="px-3 py-2 border-2 border-black rounded-lg text-xl
+              hover:bg-black hover:text-white">
+        ←
+    </a>
+
+    <h1 class="text-xl font-bold text-blue-800">
+        {{ subject.name }} – Study Materials
+    </h1>
+
+    <a href="{% url 'logout' %}"
+       class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+        Logout
+    </a>
+</header>
+
+<main class="pt-24 max-w-5xl mx-auto px-6 pb-12">
+
+    {% if materials %}
+        <div class="grid grid-cols-2 gap-6">
+            {% for mat in materials %}
+            <div class="bg-white shadow rounded-lg p-6 border">
+                <h3 class="text-lg font-semibold mb-2">
+                    {{ mat.title }}
+                </h3>
+                <p class="text-gray-600 mb-3">
+                    {{ mat.description }}
+                </p>
+
+                <a href="{{ mat.file.url }}"
+                   target="_blank"
+                   class="text-blue-700 font-medium hover:underline">
+                    View / Download
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-500 text-center">
+            No study materials available for this subject.
+        </p>
+    {% endif %}
+
+</main>
+
+</body>
+</html>
