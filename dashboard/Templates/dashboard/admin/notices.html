@@ -104,22 +104,19 @@
 
 </main>
 <script>
-/* -------------------------------
-   NOTICE: More / Less toggle
--------------------------------- */
+
 document.querySelectorAll('.notice-card').forEach(card => {
     const content = card.querySelector('.notice-content');
     const toggleBtn = card.querySelector('.notice-toggle');
 
     if (!content || !toggleBtn) return;
 
-    // Show "More" only if content overflows
     if (content.scrollHeight > content.clientHeight) {
         toggleBtn.classList.remove('hidden');
     }
 
     toggleBtn.addEventListener('click', e => {
-        e.stopPropagation(); // prevent card selection
+        e.stopPropagation();
         content.classList.toggle('line-clamp-1');
 
         toggleBtn.textContent = content.classList.contains('line-clamp-1')
@@ -128,9 +125,7 @@ document.querySelectorAll('.notice-card').forEach(card => {
     });
 });
 
-/* -------------------------------
-   NOTICE: Selection Logic
--------------------------------- */
+
 const cards = document.querySelectorAll('.notice-card');
 const actionBar = document.getElementById('actionBar');
 const selectAll = document.getElementById('selectAll');
@@ -143,7 +138,6 @@ function updateActionBar() {
 cards.forEach(card => {
     card.addEventListener('click', e => {
 
-        // Ignore clicks on controls
         if (
             e.target.closest('.notice-toggle') ||
             e.target.closest('a') ||
@@ -162,9 +156,6 @@ cards.forEach(card => {
     });
 });
 
-/* -------------------------------
-   NOTICE: Select All
--------------------------------- */
 selectAll.addEventListener('change', () => {
     document.querySelectorAll('.notice-checkbox').forEach(cb => {
         cb.checked = selectAll.checked;
@@ -177,9 +168,7 @@ selectAll.addEventListener('change', () => {
     updateActionBar();
 });
 
-/* -------------------------------
-   STOP PROPAGATION FOR LINKS & CHECKBOXES
--------------------------------- */
+
 document.querySelectorAll('.notice-checkbox, a').forEach(el => {
     el.addEventListener('click', e => e.stopPropagation());
 });
