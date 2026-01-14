@@ -9,7 +9,7 @@ from users.models import UserProfile
 from rooms.models import Building, Room, RoomBooking
 from notes.models import Semester, Subject , StudyMaterial
 from notices.models import Notice , UserNoticeStatus
-from events.models import Event
+from events.models import Event , EventRegistration
 from events.forms import EventForm
 from .auth_views import redirect_to_dashboard
 
@@ -171,30 +171,36 @@ def subject_materials_view(request, subject_id):
 @login_required
 def events_view(request):
     profile = UserProfile.objects.get(user=request.user)
+
     search_query = request.GET.get('search', '').strip()
 
-    events = Event.objects.filter(status='Approved', date__gte=date.today())
+    events = Event.objects.filter(
+        status='Approved',
+        date__gte=date.today()
+    )
 
     if search_query:
         events = events.filter(
             Q(title__icontains=search_query) |
             Q(description__icontains=search_query)
         )
-
     visible_events = [
         event for event in events
         if not event.target_role or event.target_role == profile.role
     ]
-
-    return render(
-        request,
-        'dashboard/student/event_Page.html',
-        {
-            'events': visible_events,
-            'search_query': search_query
-        }
+    registered_event_ids = set(
+        EventRegistration.objects.filter(
+            user=request.user
+        ).values_list('event_id', flat=True)
     )
 
+    context = {
+        'events': visible_events,
+        'search_query': search_query,
+        'registered_event_ids': registered_event_ids,
+    }
+
+    return render(request, 'dashboard/student/event_Page.html', context)
 @login_required
 def add_event(request):
     if request.method == "POST":
@@ -210,6 +216,50 @@ def add_event(request):
         form = EventForm()
 
     return render(request, 'dashboard/student/add_event.html', {'form': form})
+
+@login_required
+def register_event(request , event_id):
+    event = get_object_or_404(Event , id=event_id)
+    if event.status != "Approved":
+        messages.error(request , 'This event is not approved yet')
+        return redirect('events')
+    if event.date < date.today():
+        messages.error(request , 'You cannot register for past events')
+        return redirect('events')
+    already_registered = EventRegistration.objects.filter(
+        event=event,
+        user=request.user
+    )
+    if already_registered:
+        messages.warning(request,'You are already registered for this event')
+        return redirect('events')
+    else:
+        EventRegistration.objects.create(
+            event=event,
+            user=request.user
+        )
+        messages.success(request,'You are successfully registered for this event.')
+        return redirect('events')
+    
+@login_required
+def unregister_event(request,event_id):
+    event = get_object_or_404(Event , id=event_id)
+    registration = EventRegistration.objects.filter(
+        event=event,
+        user=request.user
+    ).first()
+
+    if not registration:
+        messages.error(request, "You are not registered for this event.")
+        return redirect('events')
+
+    if event.date < date.today():
+        messages.error(request, "You cannot unregister from past events.")
+        return redirect('events')
+
+    registration.delete()
+    messages.success(request, "You have been unregistered from the event.")
+    return redirect('events')    
 
 @login_required
 def clear_student_notices(request):

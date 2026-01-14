@@ -14,6 +14,10 @@ class UserNoticeStatus(models.Model):
     notice = models.ForeignKey(Notice , on_delete=models.CASCADE) 
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     cleared = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False)
 
     class Meta:
         unique_together=  ['user','notice']   
+
+    def __str__(self):
+        return f"{self.user.username} - {self.notice.title} - {'Read' if self.is_read else 'Unread'}"    

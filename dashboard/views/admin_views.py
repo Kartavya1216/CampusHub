@@ -144,7 +144,7 @@ def handle_event_approval(request, event_id , action):
     event.save()
     return redirect('approve_events')
 @login_required
-def events_view(request):
+def admin_events_view(request):
     profile = UserProfile.objects.get(user=request.user)
     if profile.role != 'Admin':
         return redirect(redirect_to_dashboard(request.user))
@@ -169,7 +169,7 @@ def events_view(request):
     )
 
 @login_required
-def add_event(request):
+def admin_add_event(request):
     profile = UserProfile.objects.get(user=request.user)
     if profile.role != 'Admin':
         return redirect(redirect_to_dashboard(request.user))
@@ -186,7 +186,7 @@ def add_event(request):
                 event.status = 'Pending'
                 messages.success(request, 'Event request submitted. Awaiting approval.')
             event.save()
-            return redirect('events')
+            return redirect('admin_events')
     else:
         form = EventForm()
 
