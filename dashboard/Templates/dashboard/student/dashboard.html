@@ -32,10 +32,21 @@
     
                         <a href="{%url 'study_material' %}" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Study Materials</a>
                         <a href="{%url 'roomBook' %}" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Room Booking</a>
-                        <a href="{%url 'notices' %}" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Notices</a>
+                        <a href="{% url 'notices' %}" class="relative flex items-center justify-between px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">
+                            Notices
+
+                            {% if unread_notice_count > 0 %}
+                                <span
+                                    class="bg-red-600 text-white text-xs font-bold
+                                        px-2 py-0.5 rounded-full">
+                                    {{ unread_notice_count }}
+                                </span>
+                            {% endif %}
+                            </a>
+
                         <a href="{%url 'events' %}" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Event Management</a>
     
-                    <!-- FACULTY FEATURES -->
+                    <!-- FACULTY FEATURES
                     {% if profile.role == "Faculty" %}
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Upload Materials</a>
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Room Booking</a>
@@ -43,18 +54,16 @@
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Event Management</a>
                     {% endif %}
     
-                    <!-- STAFF FEATURES -->
                     {% if profile.role == "Staff" %}
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Maintenance Requests</a>
                     {% endif %}
     
-                    <!-- ADMIN FEATURES -->
                     {% if profile.role == "Admin" %}
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Manage Users</a>
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Approve Rooms</a>
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Approvals</a>
                         <a class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 cursor-pointer">Event Management</a>
-                    {% endif %}
+                    {% endif %} -->
     
                 </nav>
             </aside>
@@ -72,12 +81,58 @@
     
                 <!-- CONTENT PLACEHOLDER -->
                 <div class="mt-10">
-                    <div class="p-6 bg-white rounded-lg shadow">
-                        <p class="text-gray-700">
-                            Select an option from the menu to continue.
-                            1. Add user enroll in events that are going to occur .
-                            2. Show different levels of important notices .
-                        </p>
+                    <div class="p-6 bg-white rounded-lg shadow text-black">
+                        <h2 class="text-2xl font-bold mb-4">Room Bookings</h2>
+
+                        <h3 class="text-lg font-semibold">Pending</h3>
+                        {% for booking in context.pending_rooms %} ... {% empty %} No pending requests {% endfor %}
+
+                        <h3 class="text-lg font-semibold mt-6">Approved (Upcoming)</h3>
+                        {% for booking in context.approved_rooms %} ... {% empty %} None {% endfor %}
+
+                        <h3 class="text-lg font-semibold mt-6">Past</h3>
+                        {% for booking in context.past_rooms %} ... {% empty %} None {% endfor %}
+
+                        <h2 class="text-2xl font-bold mt-10 mb-4">My Event Requests</h2>
+
+                        {% for event in context.my_event_requests %}
+                            <div class="p-4 border rounded mb-3">
+                                <p><strong>{{ event.title }}</strong></p>
+                                <p>Status:
+                                    <span class="
+                                        {% if event.status == 'Pending' %}text-yellow-600
+                                        {% elif event.status == 'Approved' %}text-green-600
+                                        {% else %}text-red-600{% endif %}">
+                                        {{ event.status }}
+                                    </span>
+                                </p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500">You haven’t requested any events.</p>
+                        {% endfor %}
+
+                        <h2 class="text-2xl font-bold mt-10 mb-4">Events I’m Attending</h2>
+
+                        <h3 class="text-lg font-semibold">Upcoming</h3>
+                        {% for reg in context.upcoming_registered_events %}
+                            <div class="p-4 bg-green-100 border rounded mb-3">
+                                <p><strong>{{ reg.event.title }}</strong></p>
+                                <p>{{ reg.event.date }} | {{ reg.event.start_time }} – {{ reg.event.end_time }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500">No upcoming registered events.</p>
+                        {% endfor %}
+
+                        <h3 class="text-lg font-semibold mt-6">Past</h3>
+                        {% for reg in context.past_registered_events %}
+                            <div class="p-4 bg-gray-100 border rounded mb-3">
+                                <p><strong>{{ reg.event.title }}</strong></p>
+                                <p>{{ reg.event.date }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500">No past events.</p>
+                        {% endfor %}
+
                     </div>
                 </div>
     

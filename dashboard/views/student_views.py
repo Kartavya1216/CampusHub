@@ -16,11 +16,60 @@ from .auth_views import redirect_to_dashboard
 
 @login_required
 def student_dashboard(request):
+    user = request.user
     profile = UserProfile.objects.get(user=request.user)
     if profile.role != 'Student':
         return redirect(redirect_to_dashboard(request.user))
+    unread_notice_count = UserNoticeStatus.objects.filter(
+        user=request.user,
+        is_read=False,
+        cleared=False
+    ).count()
 
-    return render(request, 'dashboard/student/dashboard.html')
+    # ROOM BOOKINGS
+    pending_rooms = RoomBooking.objects.filter(
+        registered_by=user,
+        status='Pending'
+    ).order_by('date')
+
+    approved_rooms = RoomBooking.objects.filter(
+        registered_by=user,
+        status='Approved',
+        date__gte=date.today()
+    ).order_by('date')
+
+    past_rooms = RoomBooking.objects.filter(
+        registered_by=user,
+        date__lt=date.today()
+    ).order_by('-date')
+    # EVENT REQUESTS (CREATED BY STUDENT)
+    my_event_requests = Event.objects.filter(
+        created_by=user
+    ).order_by('-created_at')
+    # EVENT PARTICIPATION (REGISTERED EVENTS)
+    registered_events = EventRegistration.objects.filter(
+        user=user,
+        event__status='Approved'
+    ).select_related('event')
+
+    upcoming_registered_events = registered_events.filter(
+        event__date__gte=date.today()
+    ).order_by('event__date')
+
+    past_registered_events = registered_events.filter(
+        event__date__lt=date.today()
+    ).order_by('-event__date')
+
+    context = {
+        'pending_rooms': pending_rooms,
+        'approved_rooms': approved_rooms,
+        'past_rooms': past_rooms,
+        'my_event_requests': my_event_requests,
+        'upcoming_registered_events': upcoming_registered_events,
+        'past_registered_events': past_registered_events,
+    }
+    return render(request, 'dashboard/student/dashboard.html',{'unread_notice_count': unread_notice_count,'context':context})
+
 
 @login_required
 def room_booking_select_building(request):
@@ -96,14 +145,52 @@ def room_booking_submit(request):
 
 @login_required
 def notices_view(request):
-    hidden_notice_ids = UserNoticeStatus.objects.filter(user=request.user ,cleared=True).values_list('notice_id',flat=True)
-    notices = Notice.objects.filter(
-        is_active=True
-    ).exclude(id__in=hidden_notice_ids).order_by('-created_at')
+    all_notices = Notice.objects.filter(is_active=True).order_by('-created_at')
+
+    for notice in all_notices:
+        UserNoticeStatus.objects.get_or_create(
+            user=request.user,
+            notice=notice
+        )
+
+    hidden_notice_ids = UserNoticeStatus.objects.filter(
+        user=request.user,
+        cleared=True
+    ).values_list('notice_id', flat=True)
+
+    statuses = UserNoticeStatus.objects.filter(
+        user=request.user
+    ).exclude(
+        notice_id__in=hidden_notice_ids
+    ).select_related('notice').order_by('-notice__created_at')
 
     return render(request, 'dashboard/student/notices.html', {
-        'notices': notices
+        'statuses': statuses
     })
+
+@login_required
+def mark_notice_read(request, notice_id):
+    if request.method == "POST":
+        status = get_object_or_404(
+            UserNoticeStatus,
+            user=request.user,
+            notice_id=notice_id
+        )
+        if not status.is_read:
+            status.is_read = True
+            status.save()
+
+    return redirect('notices')
+
+@login_required
+def clear_student_notices(request):
+    if request.method == "POST":
+        UserNoticeStatus.objects.filter(
+            user=request.user,
+            cleared=False
+        ).update(cleared=True)
+
+    return redirect('notices')
 
 
 @login_required
@@ -260,14 +347,4 @@ def unregister_event(request,event_id):
     registration.delete()
     messages.success(request, "You have been unregistered from the event.")
     return redirect('events')    
-
-@login_required
-def clear_student_notices(request):
-    if request.method == 'POST':
-        notices = Notice.objects.filter(is_active=True)
-        for notice in notices:
-            UserNoticeStatus.objects.get_or_create(user=request.user , notice=notice , defaults={'cleared':True})
-
-        messages.success(request , 'Your Inbox has been cleared')
-
-    return redirect('notices')        
+       

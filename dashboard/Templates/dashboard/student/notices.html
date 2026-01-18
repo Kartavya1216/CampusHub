@@ -29,7 +29,7 @@
         <form method="POST" action="{% url 'clear_student_notices' %}">
             {% csrf_token %}
             <button
-                type="submit"
+                type="button"
                 onclick="return confirm('Clear all notices from your inbox?')"
                 class="px-4 py-2 bg-gray-700 text-white rounded-md
                     hover:bg-gray-800 transition">
@@ -38,12 +38,25 @@
         </form>
     </div>
 
-    {% for notice in notices %}
+    {% for status in statuses %}
+    {% with notice=status.notice %}
+    <form method="POST" action="{% url 'mark_notice_read' notice.id %}">
+    {% csrf_token %}
+    <button type="submit"
+        class="w-full text-left bg-gray-100 border rounded-lg shadow-sm
+               p-6 mb-6 cursor-pointer
+               {% if not status.is_read %}
+                   bg-gray-300 font-semibold
+               {% endif %}">
+
     <div class="bg-gray-100 border rounded-lg shadow-sm p-6 mb-6">
 
         <h3 class="text-xl font-semibold mb-1">
             {{ notice.title }}
         </h3>
+        {% if not status.is_read %}
+            <span class="text-xs text-blue-700 font-bold">NEW</span>
+        {% endif %}
 
 
         <p class="text-sm text-gray-500 mb-3">
@@ -70,23 +83,23 @@
         </div>
         {% endif %}
 
-
     </div>
-    {% empty %}
+        </button>
+    </form>
+    {% endwith %}
+                {% empty %}
         <p class="text-center text-gray-500">No notices available.</p>
     {% endfor %}
 
 </main>
 
 <script>
-document.querySelectorAll('.notice-content').forEach(content => {
-    const btn = content.nextElementSibling;
+document.querySelectorAll('.notice-toggle').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    if (content.scrollHeight > content.clientHeight) {
-        btn.classList.remove('hidden');
-    }
-
-    btn.addEventListener('click', () => {
+        const content = btn.previousElementSibling;
         content.classList.toggle('line-clamp-1');
 
         btn.textContent = content.classList.contains('line-clamp-1')

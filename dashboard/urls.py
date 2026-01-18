@@ -17,6 +17,7 @@ urlpatterns = [
     path('dashboard/student/study-material/', views.study_material_view , name='study_material'),
     path('dashboard/student/study_material/subject/<int:subject_id>' ,views.subject_materials_view , name="subject_materials" ),
     path('dashboard/student/notices/', views.notices_view, name='notices'),
+    path('notices/read/<int:notice_id>/', views.mark_notice_read, name='mark_notice_read'),
     path('dashboard/student/notices/clear', views.clear_student_notices , name='clear_student_notices'),
     path('dashboard/student/events/',views.events_view,name='events'),
     path('dashboard/student/events/add/', views.add_event, name='add_event'),
