@@ -1,0 +1,34 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style> 
+    </head>
+    <body class="bg-gray-100">
+
+        <h1 class="text-3xl font-bold">Welcome to CampusHub</h1>
+
+        <p class="mt-4 text-gray-600">
+        Before using the system, let’s configure your campus structure.
+        This will help CampusHub match your real campus accurately.
+        </p>
+
+        <div class="mt-8 flex gap-4">
+            <a href="{% url 'admin_setup_buildings' %}"
+            class="px-6 py-3 bg-blue-700 text-white rounded">
+                Start Setup
+            </a>
+
+            <form method="POST">
+                {% csrf_token %}
+                <button name="skip" class="px-6 py-3 bg-gray-600 text-white rounded">
+                    Skip for now
+                </button>
+            </form>
+        </div>
+    </body>
+</html>

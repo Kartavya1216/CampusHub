@@ -1,0 +1,38 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style> 
+    </head>
+    <body class="bg-gray-100">
+
+        <h2 class="text-2xl font-bold mb-4">Add Buildings</h2>
+
+        <form method="POST" class="flex gap-3 mb-6">
+            {% csrf_token %}
+            <input name="name" placeholder="Building Name"
+                   class="border px-4 py-2 rounded w-full">
+            <button class="bg-blue-700 text-white px-4 py-2 rounded">
+                Add
+            </button>
+        </form>
+        
+        <ul class="space-y-2">
+            {% for building in buildings %}
+                <li class="p-3 bg-gray-100 rounded">
+                    {{ building.name }}
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <a href="{% url 'admin_setup_floors' %}"
+           class="mt-6 inline-block bg-green-600 text-white px-6 py-2 rounded">
+           Next: Floors →
+        </a>
+                
+    </body>
+</html>

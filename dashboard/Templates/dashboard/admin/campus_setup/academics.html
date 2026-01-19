@@ -1,0 +1,61 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style> 
+    </head>
+    <body class="bg-gray-100">
+
+        <h2 class="text-2xl font-bold mb-6">Academic Structure</h2>
+
+        <form method="POST" class="grid grid-cols-3 gap-4 mb-8">
+            {% csrf_token %}
+
+            <select name="department" class="border p-2 rounded" required>
+                <option value="">Select Department</option>
+                {% for dept, label in departments %}
+                    <option value="{{ dept }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="number"
+                name="total_semesters"
+                placeholder="Total Semesters"
+                class="border p-2 rounded"
+                min="1"
+                required>
+
+            <button class="bg-blue-700 text-white rounded px-4 py-2">
+                Create Semesters
+            </button>
+        </form>
+
+        <hr class="mb-6">
+
+        {% for dept, label in departments %}
+            <h3 class="text-xl font-semibold mt-6">{{ label }}</h3>
+
+            <ul class="mt-2 space-y-2">
+                {% for sem in semesters %}
+                    {% if sem.department == dept %}
+                        <li class="bg-gray-100 p-3 rounded">
+                            Semester {{ sem.semester_number }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="text-gray-500">No semesters added.</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+
+        <a href="{% url 'admin_setup_subjects' %}"
+        class="inline-block mt-10 bg-green-600 text-white px-6 py-2 rounded">
+        Next: Subjects →
+        </a>
+
+    </body>
+</html>

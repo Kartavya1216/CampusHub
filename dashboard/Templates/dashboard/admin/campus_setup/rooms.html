@@ -1,0 +1,87 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style> 
+    </head>
+    <body class="bg-gray-100">
+
+                <h2 class="text-2xl font-bold mb-6">Add Rooms</h2>
+
+                <form method="POST" class="grid grid-cols-5 gap-4 mb-8">
+                    {% csrf_token %}
+                
+                    <select name="floor" class="border p-2 rounded" required>
+                        <option value="">Select Floor</option>
+                        {% for floor in floors %}
+                            <option value="{{ floor.id }}">
+                                {{ floor.building.name }} – Floor {{ floor.floor_number }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                
+                    <input name="room_number"
+                           placeholder="Room Number"
+                           class="border p-2 rounded"
+                           required>
+                
+                    <select name="type" class="border p-2 rounded" required>
+                        <option value="">Room Type</option>
+                        <option value="ClassRoom">Classroom</option>
+                        <option value="Lab">Lab</option>
+                        <option value="Conference">Conference</option>
+                    </select>
+                
+                    <input type="number"
+                           name="capacity"
+                           placeholder="Capacity"
+                           class="border p-2 rounded"
+                           required>
+                
+                    <button class="bg-blue-700 text-white rounded px-4 py-2">
+                        Add Room
+                    </button>
+                </form>
+                
+                <hr class="mb-6">
+                
+                {% for building in buildings %}
+                    <h3 class="text-xl font-semibold mt-6">{{ building.name }}</h3>
+                
+                    {% for floor in floors %}
+                        {% if floor.building_id == building.id %}
+                            <h4 class="mt-3 font-medium">
+                                Floor {{ floor.floor_number }}
+                            </h4>
+                
+                            <ul class="mt-2 space-y-2">
+                                {% for room in rooms %}
+                                    {% if room.floor_id == floor.id %}
+                                        <li class="bg-gray-100 p-3 rounded flex justify-between">
+                                            <span>
+                                                Room {{ room.room_number }} ({{ room.type }})
+                                            </span>
+                                            <span class="text-gray-600">
+                                                Capacity: {{ room.capacity }}
+                                            </span>
+                                        </li>
+                                    {% endif %}
+                                {% empty %}
+                                    <li class="text-gray-500">No rooms added.</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                
+                <a href="{% url 'admin_setup_academics' %}"
+                   class="inline-block mt-10 bg-green-600 text-white px-6 py-2 rounded">
+                   Next: Academic Structure →
+                </a>
+                
+    </body>
+</html>

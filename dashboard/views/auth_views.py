@@ -48,12 +48,18 @@ def redirect_to_dashboard(user):
     profile = UserProfile.objects.get(user=user)
 
     if profile.role == 'Admin':
+        if not profile.is_campus_setup_completed:
+            return 'admin_campus_setup'
         return 'admin_dashboard'
+
     elif profile.role == 'Faculty':
         return 'faculty_dashboard'
+
     elif profile.role == 'Staff':
         return 'staff_dashboard'
+
     return 'student_dashboard'
+
 
 
 def logout_def(request):

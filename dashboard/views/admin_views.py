@@ -4,7 +4,7 @@ from users.models import UserProfile
 from django.contrib.auth.models import User
 from .auth_views import redirect_to_dashboard
 from django.contrib import messages
-from rooms.models import RoomBooking
+from rooms.models import RoomBooking , Floor , Room , Building
 from notices.models import Notice
 from events.models import Event
 from events.forms import EventForm
@@ -20,6 +20,145 @@ def admin_dashboard(request):
         return redirect(redirect_to_dashboard(request.user))
 
     return render(request, 'dashboard/admin/dashboard.html')
+
+@login_required
+def admin_campus_setup(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+    if profile.is_campus_setup_completed:
+        return redirect('admin_dashboard')    
+    return render(request, 'dashboard/admin/campus_setup/start.html')
+
+@login_required
+def admin_setup_buildings(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+
+    buildings = Building.objects.all()
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+        if name:
+            Building.objects.create(name=name)
+            messages.success(request, "Building added successfully.")
+
+    return render(
+        request,
+        'dashboard/admin/campus_setup/buildings.html',
+        {'buildings': buildings}
+    )
+
+@login_required
+def admin_setup_floors(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+
+    buildings = Building.objects.all()
+    floors = Floor.objects.select_related('building').order_by('building', 'floor_number')
+
+    if request.method == "POST":
+        building_id = request.POST.get('building')
+        floor_number = request.POST.get('floor_number')
+        floor_name = request.POST.get('floor_name')
+
+        if building_id and floor_number:
+            Floor.objects.create(
+                building_id=building_id,
+                floor_number=floor_number,
+                floor_name=floor_name
+            )
+            messages.success(request, "Floor added successfully.")
+            return redirect('admin_setup_floors')
+
+    return render(
+        request,
+        'dashboard/admin/campus_setup/floors.html',
+        {
+            'buildings': buildings,
+            'floors': floors
+        }
+    )
+
+@login_required
+def admin_setup_rooms(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+
+    buildings = Building.objects.all()
+    floors = Floor.objects.select_related('building')
+    rooms = Room.objects.select_related('floor__building').order_by(
+        'floor__building__name',
+        'floor__floor_number',
+        'room_number'
+    )
+
+    if request.method == "POST":
+        floor_id = request.POST.get('floor')
+        room_number = request.POST.get('room_number')
+        room_type = request.POST.get('type')
+        capacity = request.POST.get('capacity')
+
+        if floor_id and room_number and room_type and capacity:
+            try:
+                Room.objects.create(
+                    floor_id=floor_id,
+                    room_number=room_number,
+                    type=room_type,
+                    capacity=capacity
+                )
+                messages.success(request, "Room added successfully.")
+            except:
+                messages.error(request, "Room already exists on this floor.")
+
+        return redirect('admin_setup_rooms')
+
+    return render(
+        request,
+        'dashboard/admin/campus_setup/rooms.html',
+        {
+            'buildings': buildings,
+            'floors': floors,
+            'rooms': rooms
+        }
+    )
+@login_required
+def admin_setup_academics(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+
+    departments = UserProfile.DEPARTMENT_CHOICES
+    semesters = Semester.objects.all().order_by('department', 'semester_number')
+
+    if request.method == "POST":
+        department = request.POST.get('department')
+        total_semesters = int(request.POST.get('total_semesters', 0))
+
+        for i in range(1, total_semesters + 1):
+            Semester.objects.get_or_create(
+                department=department,
+                semester_number=i
+            )
+
+        messages.success(
+            request,
+            f"{total_semesters} semesters created for {department}."
+        )
+        return redirect('admin_setup_academics')
+
+    return render(
+        request,
+        'dashboard/admin/campus_setup/academics.html',
+        {
+            'departments': departments,
+            'semesters': semesters
+        }
+    )
+
 @login_required
 def manage_users(request):
     profile = UserProfile.objects.get(user=request.user)
