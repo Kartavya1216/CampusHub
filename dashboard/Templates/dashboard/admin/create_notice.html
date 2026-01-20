@@ -42,6 +42,20 @@
                       class="w-full border rounded px-3 py-2"
                       required></textarea>
         </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mt-4">
+                Expiry Date & Time (optional)
+            </label>
+            <input
+                type="datetime-local"
+                name="expires_at"
+                class="mt-1 block w-full border rounded px-3 py-2"
+            />
+
+            <p class="text-xs text-gray-500 mt-1">
+                If left empty, notice will expire after 24 hours.
+            </p>
+        </div>
 
         <div class="mb-4">
             <label class="block text-sm font-medium mb-1">

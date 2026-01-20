@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from datetime import date
+from datetime import date , timezone , datetime
 from django.db.models import Q
 from django.http import Http404
 
@@ -110,8 +110,9 @@ def room_booking_submit(request):
     if not date1 or not start_time or not end_time or not reason:
         messages.error(request,'Please all the required fields')
         return redirect('roomBook')    
-    if date1 < str(date.today()):
-        messages.error(request,'Booking date cannot be date that is gone. ')
+    booking_date = datetime.strptime(date1, "%Y-%m-%d").date()
+    if booking_date < date.today():
+        messages.error(request, "Booking date cannot be in the past.")
         return redirect('roomBook')
     for room_id in selected_rooms:
         room = Room.objects.get(id=room_id)
@@ -143,9 +144,36 @@ def room_booking_submit(request):
     messages.success(request, "Booking request submitted successfully!")
     return redirect("dashboard") 
 
+
+@login_required
+def room_booking_history(request):
+    bookings = RoomBooking.objects.filter(
+        registered_by=request.user
+    ).order_by('-date', '-start_time')
+
+    return render(
+        request,
+        'dashboard/student/room_booking_history.html',
+        {'bookings': bookings}
+    )
+@login_required
+def cancel_room_booking(request, booking_id):
+    booking = get_object_or_404(
+        RoomBooking,
+        id=booking_id,
+        registered_by=request.user,
+        status='Pending'
+    )
+
+    booking.delete()
+    messages.success(request, "Booking request cancelled successfully.")
+    return redirect('room_booking_history')
+
 @login_required
 def notices_view(request):
-    all_notices = Notice.objects.filter(is_active=True).order_by('-created_at')
+    all_notices = Notice.objects.filter(is_active=True).filter(
+                    Q(expires_at__isnull=True) |
+                    Q(expires_at__gte=timezone.now())).order_by('-created_at')
 
     for notice in all_notices:
         UserNoticeStatus.objects.get_or_create(

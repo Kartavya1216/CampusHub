@@ -22,13 +22,11 @@
             class="px-6 py-3 bg-blue-700 text-white rounded">
                 Start Setup
             </a>
-
-            <form method="POST">
-                {% csrf_token %}
-                <button name="skip" class="px-6 py-3 bg-gray-600 text-white rounded">
-                    Skip for now
-                </button>
-            </form>
+            <a href="{% url 'admin_dashboard' %}"
+            class="px-6 py-3 bg-gray-600 text-white rounded">
+                Skip for now
+            </a>
+            
         </div>
     </body>
 </html>

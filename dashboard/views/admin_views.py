@@ -7,6 +7,7 @@ from django.contrib import messages
 from rooms.models import RoomBooking , Floor , Room , Building
 from notices.models import Notice
 from events.models import Event
+from notes.models import Semester , Subject
 from events.forms import EventForm
 from django.utils import timezone
 from datetime import timedelta, date
@@ -158,6 +159,40 @@ def admin_setup_academics(request):
             'semesters': semesters
         }
     )
+@login_required
+def admin_setup_subjects(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+
+    semesters = Semester.objects.order_by('department', 'semester_number')
+    subjects = Subject.objects.select_related('semester').order_by('semester__semester_number')
+
+    if request.method == "POST":
+        semester_id = request.POST.get('semester')
+        subject_name = request.POST.get('name')
+
+        if not semester_id or not subject_name:
+            messages.error(request, "All fields are required.")
+            return redirect('admin_setup_subjects')
+
+        Subject.objects.create(
+            semester_id=semester_id,
+            name=subject_name
+        )
+
+        messages.success(request, "Subject added successfully.")
+        return redirect('admin_setup_subjects')
+
+    return render(
+        request,
+        'dashboard/admin/campus_setup/subjects.html',
+        {
+            'semesters': semesters,
+            'subjects': subjects
+        }
+    )
+
 
 @login_required
 def manage_users(request):
@@ -383,16 +418,38 @@ def create_notice(request):
         title = request.POST.get('title')
         content = request.POST.get('content')
         attachment = request.FILES.get('attachment')
+        expires_at_input = request.POST.get('expires_at')
 
         if not title or not content:
             messages.error(request, 'Title and content are required.')
             return redirect('create_notice')
 
+        now = timezone.now()
+
+        expires_at = now + timedelta(hours=24)
+
+        if expires_at_input:
+            try:
+                expires_at = timezone.make_aware(
+                    timezone.datetime.fromisoformat(expires_at_input)
+                )
+            except ValueError:
+                messages.error(request, 'Invalid expiry date format.')
+                return redirect('create_notice')
+
+            if expires_at <= now:
+                messages.error(
+                    request,
+                    'Expiry date must be later than the current time.'
+                )
+                return redirect('create_notice')
+
         Notice.objects.create(
             title=title,
             content=content,
             attachment=attachment,
-            posted_by=request.user
+            posted_by=request.user,
+            expires_at=expires_at
         )
 
         messages.success(request, 'Notice published successfully.')

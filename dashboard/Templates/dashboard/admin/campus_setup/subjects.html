@@ -1,0 +1,68 @@
+{% load static %}
+<html>
+    <head>
+        <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+        <style>
+            html{
+                scroll-behavior: smooth;
+            }
+        </style> 
+    </head>
+    <body class="bg-gray-100">
+
+        <h2 class="text-3xl font-bold mb-6">Subject Setup</h2>
+
+        <form method="POST" class="grid grid-cols-3 gap-4 mb-8">
+            {% csrf_token %}
+
+            <select name="semester" class="border p-2 rounded" required>
+                <option value="">Select Semester</option>
+                {% for sem in semesters %}
+                    <option value="{{ sem.id }}">
+                        {{ sem.department }} – Semester {{ sem.semester_number }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Subject name"
+                class="border p-2 rounded"
+                required
+            />
+
+            <button
+                type="submit"
+                class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">
+                Add Subject
+            </button>
+        </form>
+
+        <hr class="mb-8">
+
+        {% for sem in semesters %}
+            <h3 class="text-xl font-semibold mt-6">
+                {{ sem.department }} – Semester {{ sem.semester_number }}
+            </h3>
+
+            <ul class="mt-2 space-y-2">
+                {% for sub in subjects %}
+                    {% if sub.semester_id == sem.id %}
+                        <li class="bg-gray-100 p-3 rounded">
+                            {{ sub.name }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="text-gray-500">No subjects added.</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+
+        <a href="{% url 'admin_dashboard' %}"
+        class="inline-block mt-10 bg-green-600 text-white px-6 py-2 rounded">
+            Finish Setup →
+        </a>
+        
+    </body>
+</html>

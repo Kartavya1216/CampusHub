@@ -5,20 +5,38 @@
 </head>
 
 <body class="bg-gray-100 p-10 text-black">
-    <header class="w-full bg-white shadow flex items-center justify-between px-6 py-4 fixed top-0 left-0 right-0 z-40">
-            <a href="{% url 'student_dashboard' %}" 
-                   class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
-                    ← 
-                </a>
-    
-            <a href="{% url 'logout' %}" 
-               class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
-                Logout
-            </a>
-        </header> 
 
-    <h1 class="text-3xl font-bold mb-6">Room Booking</h1>
- 
+    <header class="w-full bg-white shadow flex items-center justify-between
+                px-6 py-4 fixed top-0 left-0 right-0 z-40">
+        <a href="{% url 'student_dashboard' %}"
+        class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+            ←
+        </a>
+
+        <a href="{% url 'logout' %}"
+        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+            Logout
+        </a>
+    </header>
+
+    <!-- ✅ ADD THIS WRAPPER -->
+    <div class="pt-24">
+
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold">Room Booking</h1>
+
+            <a href="{% url 'room_booking_history' %}"
+            class="text-blue-600 hover:underline text-sm">
+                View History →
+            </a>
+        </div>
+
+        <!-- rest of your content -->
+
+    </div>
+
+
+
     <!-- STEP 1: SELECT BUILDING -->
     <form method="GET">
         <label class="block text-lg mb-2">Choose Building:</label>
