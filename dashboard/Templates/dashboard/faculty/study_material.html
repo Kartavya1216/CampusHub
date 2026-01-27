@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet"/>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+<!-- TOP NAVBAR -->
+<header class="w-full bg-white shadow flex items-center justify-between
+               px-6 py-4 fixed top-0 left-0 right-0 z-40">
+    <a href="{% url 'faculty_dashboard' %}"
+       class="px-3 py-2 border-2 border-black rounded-lg text-xl
+              hover:bg-black hover:text-white">
+        ←
+    </a>
+
+    <h1 class="text-2xl font-bold text-blue-800">Study Materials</h1>
+
+    <a href="{% url 'logout' %}"
+       class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+        Logout
+    </a>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="pt-24 px-6 pb-12 max-w-6xl mx-auto">
+
+    <!-- HEADER ACTIONS -->
+    <div class="flex justify-between items-center mb-6">
+        <p class="text-gray-600 text-lg">
+            Access and manage study materials for your department.
+        </p>
+
+        <a href="{% url 'upload_study_material' %}"
+           class="px-5 py-2 bg-green-600 text-white rounded
+                  hover:bg-green-700 transition">
+            + Upload Material
+        </a>
+    </div>
+
+    <!-- SEMESTERS -->
+    <div class="bg-white p-6 rounded shadow mb-8">
+        <h2 class="text-xl font-semibold mb-4">Semesters</h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {% for sem in semesters %}
+                <a href="?semester={{ sem.id }}"
+                   class="p-4 border rounded text-center font-medium
+                          hover:bg-blue-600 hover:text-white transition
+                          {% if selected_semester and selected_semester.id == sem.id %}
+                              bg-blue-700 text-white
+                          {% endif %}">
+                    Semester {{ sem.semester_number }}
+                </a>
+            {% empty %}
+                <p class="text-gray-500">No semesters found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- SUBJECTS -->
+    {% if subjects %}
+    <div class="bg-white p-6 rounded shadow mb-8">
+        <h2 class="text-xl font-semibold mb-4">
+            Subjects – Semester {{ selected_semester.semester_number }}
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {% for sub in subjects %}
+                <a href="?semester={{ selected_semester.id }}&subject={{ sub.id }}"
+                   class="p-4 border rounded
+                          hover:bg-blue-600 hover:text-white transition">
+                    {{ sub.name }}
+                </a>
+            {% empty %}
+                <p class="text-gray-500">No subjects available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- MATERIALS -->
+    {% if materials %}
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-xl font-semibold mb-4">
+            Study Materials
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for mat in materials %}
+                <div class="border rounded p-4">
+                    <h3 class="text-lg font-semibold">{{ mat.title }}</h3>
+
+                    {% if mat.description %}
+                        <p class="text-sm text-gray-600 mt-1">
+                            {{ mat.description }}
+                        </p>
+                    {% endif %}
+
+                    <p class="text-xs text-gray-500 mt-2">
+                        Uploaded on {{ mat.uploaded_at|date:"d M Y, h:i A" }}
+                    </p>
+
+                    <a href="{{ mat.file.url }}"
+                       target="_blank"
+                       class="inline-block mt-3 text-blue-700 font-medium hover:underline">
+                        📎 View / Download
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-gray-500">No materials uploaded yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</main>
+
+</body>
+</html>

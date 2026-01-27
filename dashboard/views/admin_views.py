@@ -192,6 +192,18 @@ def admin_setup_subjects(request):
             'subjects': subjects
         }
     )
+@login_required
+def complete_campus_setup(request):
+    profile = UserProfile.objects.get(user=request.user)
+
+    if profile.role != 'Admin':
+        return redirect(redirect_to_dashboard(request.user))
+
+    profile.is_campus_setup_completed = True
+    profile.save()
+
+    messages.success(request, "Campus setup completed successfully.")
+    return redirect('admin_dashboard')
 
 
 @login_required

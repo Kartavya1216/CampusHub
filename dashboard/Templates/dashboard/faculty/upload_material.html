@@ -1,0 +1,40 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-10">
+
+<h1 class="text-3xl font-bold mb-6">Upload Study Material</h1>
+
+<form method="POST" enctype="multipart/form-data"
+      class="bg-white p-6 rounded shadow max-w-xl">
+    {% csrf_token %}
+
+    <label class="block mb-2">Subject</label>
+    <select name="subject" class="border px-3 py-2 rounded w-full mb-4" required>
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}">
+                {{ subject.name }} (Sem {{ subject.semester.semester_number }})
+            </option>
+        {% endfor %}
+    </select>
+
+    <label class="block mb-2">Title</label>
+    <input type="text" name="title"
+           class="border px-3 py-2 rounded w-full mb-4" required>
+
+    <label class="block mb-2">Description</label>
+    <textarea name="description"
+              class="border px-3 py-2 rounded w-full mb-4"></textarea>
+
+    <label class="block mb-2">Upload File</label>
+    <input type="file" name="file" class="mb-4" required>
+
+    <button class="px-6 py-2 bg-blue-700 text-white rounded">
+        Upload
+    </button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-10">
+
+<h1 class="text-3xl font-bold mb-6">Create Notice</h1>
+
+<form method="POST" enctype="multipart/form-data"
+      class="bg-white p-6 rounded shadow max-w-xl">
+    {% csrf_token %}
+
+    <label class="block mb-2">Title</label>
+    <input type="text" name="title"
+           class="border px-3 py-2 rounded w-full mb-4" required>
+
+    <label class="block mb-2">Content</label>
+    <textarea name="content"
+              class="border px-3 py-2 rounded w-full mb-4" required></textarea>
+
+    <label class="block mb-2">Attachment (optional)</label>
+    <input type="file" name="attachment" class="mb-4">
+
+    <label class="block mb-2">Expiry Date (optional)</label>
+    <input type="datetime-local"
+           name="expires_at"
+           class="border px-3 py-2 rounded w-full mb-6">
+
+    <button class="px-6 py-2 bg-green-700 text-white rounded">
+        Publish Notice
+    </button>
+</form>
+
+<p class="text-sm text-gray-500 mt-4">
+    * If expiry is not set, notice will expire after 24 hours.
+</p>
+
+</body>
+</html>

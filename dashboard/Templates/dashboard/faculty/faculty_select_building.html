@@ -1,0 +1,146 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 p-10 text-black">
+
+    <header class="w-full bg-white shadow flex items-center justify-between
+                px-6 py-4 fixed top-0 left-0 right-0 z-40">
+        <a href="{% url 'faculty_dashboard' %}"
+        class="px-3 py-2 border-2 border-black rounded-lg text-xl hover:bg-black hover:text-white">
+            ←
+        </a>
+
+        <a href="{% url 'logout' %}"
+        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+            Logout
+        </a>
+    </header>
+
+    <!-- ✅ ADD THIS WRAPPER -->
+    <div class="pt-24">
+
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold">Room Booking</h1>
+
+            <a href="{% url 'faculty_room_booking_history' %}"
+            class="text-blue-600 hover:underline text-sm">
+                View History →
+            </a>
+        </div>
+
+        <!-- rest of your content -->
+
+    </div>
+
+
+
+    <!-- STEP 1: SELECT BUILDING -->
+    <form method="GET">
+        <label class="block text-lg mb-2">Choose Building:</label>
+
+        <select name="building" class="px-4 py-2 border rounded-md w-80 text-lg">
+            {% for b in buildings %}
+                <option value="{{ b.id }}" {% if selected_building and selected_building.id == b.id %}selected{% endif %}>
+                    {{ b.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button class="mt-4 px-6 py-2 bg-blue-700 text-white rounded-md text-lg">
+            Load Rooms
+        </button>
+    </form>
+
+
+    <!-- STEP 2: DISPLAY FLOORS + ROOM GRID -->
+    {% if floors %}
+        <h2 class="text-2xl font-bold mt-10 mb-4">
+            Building: {{ selected_building.name }}
+        </h2>
+
+        <div id="room-grid" class="space-y-8">
+
+            {% for floor in floors %}
+                <div>
+                    <h3 class="text-xl font-semibold mb-3">{{ floor.floor_name }}</h3>
+
+                    <div class="grid grid-cols-5 gap-4">
+
+                        {% for room in floor.rooms.all %}
+                            <div class="room-box p-4 border rounded cursor-pointer"
+                                 data-room-id="{{ room.id }}"
+                                 style="background-color: lightgray;">
+                                {{ room.room_number }} {{ room.type}}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+
+
+        <!-- STEP 3: BOOKING FORM -->
+        <form method="POST" action="{% url 'faculty_room_booking_submit' %}" class="mt-10 bg-white p-6 rounded shadow" id="bookingForm">
+            {% csrf_token %}
+
+            <input type="hidden" name="selected_rooms" id="selected_rooms">
+
+            <h3 class="text-2xl font-bold mb-4">Booking Details</h3>
+
+            <label class="block mb-2">Date:</label>
+            <input type="date" name="date" class="border px-3 py-2 rounded w-64" required>
+
+            <label class="block mt-4 mb-2">Start Time:</label>
+            <input type="time" name="start_time" class="border px-3 py-2 rounded w-64" required>
+
+            <label class="block mt-4 mb-2">End Time:</label>
+            <input type="time" name="end_time" class="border px-3 py-2 rounded w-64" required>
+
+            <label class="block mt-4 mb-2">Reason:</label>
+            <textarea name="reason" class="border w-full p-3 rounded" required></textarea>
+
+            <button class="mt-6 px-6 py-3 bg-green-700 text-white rounded-lg text-lg">
+                Submit Request
+            </button>
+
+        </form>
+    {% endif %}
+
+
+<script>
+// MAX 2 ROOM SELECTION
+let selectedRooms = [];
+
+document.querySelectorAll(".room-box").forEach(box => {
+    box.addEventListener("click", () => {
+
+        const id = box.getAttribute("data-room-id");
+
+        // if already selected -> unselect
+        if (selectedRooms.includes(id)) {
+            selectedRooms = selectedRooms.filter(r => r !== id);
+            box.style.backgroundColor = "lightgray";
+        }
+        // if new selection
+        else {
+            if (selectedRooms.length >= 2) {
+                alert("You can select only 2 rooms.");
+                return;
+            }
+            selectedRooms.push(id);
+            box.style.backgroundColor = "lightgreen";  // selected
+        }
+
+        // update hidden input
+        document.getElementById("selected_rooms").value = selectedRooms.join(",");
+    });
+});
+</script>
+
+</body>
+</html>

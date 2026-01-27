@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 class Notice(models.Model):
+    status = models.CharField(
+        max_length=20,
+        choices=[('Pending','Pending'), ('Approved','Approved'), ('Rejected','Rejected')],
+        default='Pending'
+    )
     title = models.CharField(max_length=200)
     posted_by = models.ForeignKey(User , on_delete=models.CASCADE)
     content = models.TextField()

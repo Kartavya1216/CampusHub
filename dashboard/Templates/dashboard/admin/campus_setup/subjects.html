@@ -59,10 +59,16 @@
             </ul>
         {% endfor %}
 
-        <a href="{% url 'admin_dashboard' %}"
-        class="inline-block mt-10 bg-green-600 text-white px-6 py-2 rounded">
-            Finish Setup →
-        </a>
+        <form method="POST" action="{% url 'complete_campus_setup' %}">
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="bg-green-700 text-white px-6 py-3 rounded-lg
+                    hover:bg-green-800 transition">
+                Finish Setup
+            </button>
+        </form>
+
         
     </body>
 </html>

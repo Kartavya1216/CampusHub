@@ -31,6 +31,7 @@ urlpatterns = [
     path('dashboard/admin/setup/rooms', views.admin_setup_rooms, name='admin_setup_rooms'),
     path('dashboard/admin/setup/academics', views.admin_setup_academics, name='admin_setup_academics'),  
     path('dashboard/admin/setup/subjects', views.admin_setup_subjects, name='admin_setup_subjects'),  
+    path('dashboard/admin/setup/complete', views.complete_campus_setup , name='complete_campus_setup'),
     path('dashboard/admin/users',views.manage_users , name='manage_users'),
     path('dashboard/admin/users/<int:user_id>/edit/',views.edit_user,name='edit_user'),
     path('dashboard/admin/rooms',views.approve_rooms , name='approve_rooms'),
@@ -42,6 +43,22 @@ urlpatterns = [
     path('dashboard/admin/notices/',views.admin_notices,name='admin_notices'),
     path('dashboard/admin/notices/bulk-delete/',views.bulk_delete_notices,name='bulk_delete_notices'),
     path('dashboard/admin/notices/create/',views.create_notice,name='create_notice'),
+    path('dashboard/faculty/roomBook/',views.faculty_room_booking_select_building , name='faculty_roomBook'),
+    path('dashboard/faculty/roomBook/submit-roomRequest/',views.faculty_room_booking_submit , name='faculty_room_booking_submit'),
+    path('dashboard/faculty/roomBook/history/',views.faculty_room_booking_history , name='faculty_room_booking_history'),
+    path('dashboard/faculty/roomBook/<int:booking_id>/cancel/',views.faculty_cancel_room_booking,name='faculty_cancel_room_booking'),
+    path('dashboard/faculty/events/',views.faculty_events_view,name='faculty_events'),
+    path('dashboard/faculty/events/add/', views.faculty_add_event, name='faculty_add_event'),
+    path('dashboard/faculty/events/<int:event_id>/register/',views.faculty_register_event,name='faculty_register_event'),
+    path('dashboard/faculty/events/<int:event_id>/unregister/',views.faculty_unregister_event,name='faculty_unregister_event'),
+    path('dashboard/faculty/notices/',views.faculty_notices_view,name='faculty_notices'),
+    path('dashboard/faculty/notices/read/<int:notice_id>/',views.faculty_mark_notice_read,name='faculty_mark_notice_read'),
+    path('dashboard/faculty/notices/clear/',views.faculty_clear_notices,name='faculty_clear_notices'),
+    path('dashboard/faculty/notices/create/',views.faculty_create_notice,name='faculty_create_notice'),
+    path('dashboard/faculty/study-material/',views.faculty_study_material_view,name='faculty_study_material'),
+    path('dashboard/faculty/study-material/upload/',views.upload_study_material,name='upload_study_material'),
+
+
 ]
 
 

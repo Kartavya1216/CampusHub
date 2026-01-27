@@ -1,0 +1,88 @@
+{% load static %}
+<html>
+<head>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 text-black">
+
+<!-- TOP NAVBAR -->
+<header class="w-full bg-white shadow flex items-center justify-between
+               px-6 py-4 fixed top-0 left-0 right-0 z-40">
+    <a href="{% url 'faculty_roomBook' %}"
+       class="px-3 py-2 border-2 border-black rounded-lg text-xl
+              hover:bg-black hover:text-white">
+        ←
+    </a>
+
+    <a href="{% url 'logout' %}"
+       class="px-4 py-2 bg-red-600 text-white rounded-md
+              hover:bg-red-700 transition">
+        Logout
+    </a>
+</header>
+
+<!-- PAGE CONTENT -->
+<main class="pt-24 px-10">
+
+    <!-- PAGE TITLE -->
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold">Room Booking History</h1>
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white rounded shadow overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="p-3 text-left">Room</th>
+                    <th class="p-3">Date</th>
+                    <th class="p-3">Time</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for booking in bookings %}
+                <tr class="border-t">
+                    <td class="p-3">{{ booking.room }}</td>
+                    <td class="p-3">{{ booking.date }}</td>
+                    <td class="p-3">
+                        {{ booking.start_time }} – {{ booking.end_time }}
+                    </td>
+                    <td class="p-3">
+                        <span class="
+                            {% if booking.status == 'Pending' %}text-yellow-600
+                            {% elif booking.status == 'Approved' %}text-green-600
+                            {% else %}text-red-600{% endif %}">
+                            {{ booking.status }}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        {% if booking.status == 'Pending' %}
+                            <a href="{% url 'faculty_cancel_room_booking' booking.id %}"
+                               class="text-red-600 hover:underline"
+                               onclick="return confirm('Cancel this booking?')">
+                                Cancel
+                            </a>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="p-4 text-center text-gray-500">
+                        No room bookings found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -142,7 +142,7 @@ def room_booking_submit(request):
         )
 
     messages.success(request, "Booking request submitted successfully!")
-    return redirect("dashboard") 
+    return redirect("student_dashboard") 
 
 
 @login_required
